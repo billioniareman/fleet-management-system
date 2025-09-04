@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vehicle & Shipment Upload</title>
+    <link rel="stylesheet" href="{{ request.url_for('static', path='style.css') }}">
+  </head>
+  <body>
+    <main class="container">
+      <h1>Vehicle and Shipment Import</h1>
+
+      <section id="step1" class="card">
+        <h2>1) Number of Vehicles</h2>
+        <div class="row">
+          <label for="vehicleCount">Enter vehicle count</label>
+          <input id="vehicleCount" type="number" min="1" placeholder="e.g. 5" />
+        </div>
+        <div class="actions">
+          <button id="proceedVehiclesBtn" class="primary">Continue to Vehicle CSV</button>
+          <button id="resetBtn" class="secondary">Reset</button>
+        </div>
+      </section>
+
+      <section id="step2" class="card hidden">
+        <h2>2) Upload Vehicle CSV</h2>
+        <p class="hint">Expected headers (order matters):</p>
+        <code class="headers">
+          id, vehicle_description, capacity, start_latitude, start_longitude, end_latitude, end_longitude, shift_start, shift_end, max_tasks
+        </code>
+        <div class="row file-row">
+          <input id="vehicleCsvInput" type="file" accept=".csv" />
+          <button id="downloadVehicleTemplate" class="link">Download vehicle template</button>
+        </div>
+        <div id="vehicleCsvStatus" class="status"></div>
+        <div id="vehicleTableContainer" class="table-container"></div>
+        <div class="actions">
+          <button id="toShipmentsBtn" class="primary" disabled>Continue to Shipments CSV</button>
+        </div>
+      </section>
+
+      <section id="step3" class="card hidden">
+        <h2>3) Upload Shipments CSV</h2>
+        <p class="hint">Expected headers (order matters):</p>
+        <code class="headers">
+          Pickup Id, Delivery Id, Description, Pickup Location Lat, Pickup Location Lng, Pickup Start Time, Pickup End Time, Delivery Location Lat, Delivery Location Lng, Delivery Start Time, Delivery End Time, Quantity, Priority
+        </code>
+        <div class="row file-row">
+          <input id="shipmentCsvInput" type="file" accept=".csv" />
+          <button id="downloadShipmentTemplate" class="link">Download shipment template</button>
+        </div>
+        <div id="shipmentCsvStatus" class="status"></div>
+        <div id="shipmentTableContainer" class="table-container"></div>
+      </section>
+
+      <footer class="footnote">
+        Files are parsed locally in your browser. No data is uploaded.
+      </footer>
+    </main>
+
+    <script src="{{ request.url_for('static', path='app.js') }}"></script>
+  </body>
+  </html>
