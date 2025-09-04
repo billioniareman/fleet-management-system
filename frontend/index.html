@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Vehicle & Shipment Upload</title>
     <link rel="stylesheet" href="{{ request.url_for('static', path='style.css') }}">
+    <!-- Leaflet CSS for the map -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
   </head>
   <body>
     <main class="container">
@@ -51,6 +58,20 @@
         </div>
         <div id="shipmentCsvStatus" class="status"></div>
         <div id="shipmentTableContainer" class="table-container"></div>
+        <div class="actions">
+          <button id="showMapBtn" class="primary" disabled>Show Map</button>
+        </div>
+      </section>
+
+      <section id="mapSection" class="card hidden">
+        <h2>4) Map Preview</h2>
+        <div id="map" class="map"></div>
+        <div class="legend">
+          <span class="dot blue"></span> Vehicle Start
+          <span class="dot cyan"></span> Vehicle End
+          <span class="dot green"></span> Pickup
+          <span class="dot red"></span> Delivery
+        </div>
       </section>
 
       <footer class="footnote">
@@ -58,6 +79,12 @@
       </footer>
     </main>
 
+    <!-- Leaflet JS before our app to ensure availability -->
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
     <script src="{{ request.url_for('static', path='app.js') }}"></script>
   </body>
   </html>

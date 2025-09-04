@@ -16,6 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const shipmentTableContainer = document.getElementById('shipmentTableContainer');
   const downloadVehicleTemplate = document.getElementById('downloadVehicleTemplate');
   const downloadShipmentTemplate = document.getElementById('downloadShipmentTemplate');
+  const showMapBtn = document.getElementById('showMapBtn');
+  const mapSection = document.getElementById('mapSection');
+
+  // Map state
+  let mapInstance = null;
+  let markersLayer = null;
 
   // Expected headers
   const VEHICLE_HEADERS = [
@@ -48,6 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   let declaredVehicleCount = null;
+  let vehiclesParsed = null; // { headers, rows }
+  let shipmentsParsed = null; // { headers, rows }
 
   // Step 1: proceed after entering count
   proceedVehiclesBtn.addEventListener('click', () => {
@@ -99,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         toShipmentsBtn.disabled = true;
         return;
       }
+      vehiclesParsed = { headers, rows };
       let msg = `Loaded ${rows.length} vehicle rows.`;
       if (declaredVehicleCount != null && rows.length !== declaredVehicleCount) {
         msg += ` Note: vehicle count (${declaredVehicleCount}) differs from rows (${rows.length}).`;
@@ -107,10 +116,13 @@ document.addEventListener('DOMContentLoaded', () => {
         notify(vehicleCsvStatus, msg, 'success');
       }
       toShipmentsBtn.disabled = false;
+      updateMapButtonState();
     } catch (err) {
       console.error(err);
       notify(vehicleCsvStatus, 'Failed to read CSV. Please check the file.', 'error');
       toShipmentsBtn.disabled = true;
+      vehiclesParsed = null;
+      updateMapButtonState();
     }
   });
 
@@ -139,10 +151,14 @@ document.addEventListener('DOMContentLoaded', () => {
         );
         return;
       }
+      shipmentsParsed = { headers, rows };
       notify(shipmentCsvStatus, `Loaded ${rows.length} shipment rows.`, 'success');
+      updateMapButtonState();
     } catch (err) {
       console.error(err);
       notify(shipmentCsvStatus, 'Failed to read CSV. Please check the file.', 'error');
+      shipmentsParsed = null;
+      updateMapButtonState();
     }
   });
 
@@ -153,6 +169,22 @@ document.addEventListener('DOMContentLoaded', () => {
   downloadShipmentTemplate?.addEventListener('click', () => {
     downloadCSV('shipments_template.csv', SHIPMENT_HEADERS, []);
   });
+
+  // Show Map
+  showMapBtn?.addEventListener('click', () => {
+    if (!vehiclesParsed || !shipmentsParsed) return;
+    mapSection.classList.remove('hidden');
+    setTimeout(() => {
+      renderMapFromData(vehiclesParsed, shipmentsParsed);
+    }, 0);
+    window.scrollTo({ top: mapSection.offsetTop - 10, behavior: 'smooth' });
+  });
+
+  function updateMapButtonState() {
+    if (showMapBtn) {
+      showMapBtn.disabled = !(vehiclesParsed && shipmentsParsed);
+    }
+  }
 });
 
 // CSV parser that handles quoted fields, commas, CRLF/LF
@@ -281,4 +313,101 @@ function csvEscape(value) {
     return '"' + s.replaceAll('"', '""') + '"';
   }
   return s;
+}
+
+// Map helpers
+function renderMapFromData(vehiclesParsed, shipmentsParsed) {
+  // Initialize map if needed
+  if (!window.L) {
+    console.warn('Leaflet not loaded');
+    return;
+  }
+  const mapEl = document.getElementById('map');
+  if (!mapEl) return;
+
+  if (!window._mapInstance) {
+    window._mapInstance = L.map(mapEl).setView([20, 0], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(window._mapInstance);
+  }
+  const map = window._mapInstance;
+
+  // Clear previous layer
+  if (window._markersLayer) {
+    window._markersLayer.remove();
+  }
+  window._markersLayer = L.layerGroup().addTo(map);
+
+  // Build points
+  const vIdx = indexMap(vehiclesParsed.headers);
+  const sIdx = indexMap(shipmentsParsed.headers);
+
+  const pts = [];
+  // Vehicle starts
+  for (const r of vehiclesParsed.rows) {
+    const lat = parseFloatSafe(r[vIdx['start_latitude']]);
+    const lng = parseFloatSafe(r[vIdx['start_longitude']]);
+    if (isFinite(lat) && isFinite(lng)) {
+      pts.push({ lat, lng, type: 'vehicle-start', label: `Vehicle ${r[vIdx['id']]} start` });
+    }
+    const eLat = parseFloatSafe(r[vIdx['end_latitude']]);
+    const eLng = parseFloatSafe(r[vIdx['end_longitude']]);
+    if (isFinite(eLat) && isFinite(eLng)) {
+      pts.push({ lat: eLat, lng: eLng, type: 'vehicle-end', label: `Vehicle ${r[vIdx['id']]} end` });
+    }
+  }
+
+  // Shipments pickups and deliveries
+  for (const r of shipmentsParsed.rows) {
+    const pLat = parseFloatSafe(r[sIdx['Pickup Location Lat']]);
+    const pLng = parseFloatSafe(r[sIdx['Pickup Location Lng']]);
+    if (isFinite(pLat) && isFinite(pLng)) {
+      pts.push({ lat: pLat, lng: pLng, type: 'pickup', label: `Pickup ${r[sIdx['Pickup Id']]}` });
+    }
+    const dLat = parseFloatSafe(r[sIdx['Delivery Location Lat']]);
+    const dLng = parseFloatSafe(r[sIdx['Delivery Location Lng']]);
+    if (isFinite(dLat) && isFinite(dLng)) {
+      pts.push({ lat: dLat, lng: dLng, type: 'delivery', label: `Delivery ${r[sIdx['Delivery Id']]}` });
+    }
+  }
+
+  // Add markers
+  for (const p of pts) {
+    const marker = L.circleMarker([p.lat, p.lng], markerStyle(p.type))
+      .bindPopup(`<strong>${escapeHtml(p.label)}</strong><br>${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}`);
+    marker.addTo(window._markersLayer);
+  }
+
+  // Fit bounds
+  if (pts.length) {
+    const bounds = L.latLngBounds(pts.map(p => [p.lat, p.lng]));
+    map.fitBounds(bounds.pad(0.2));
+  }
+}
+
+function parseFloatSafe(v) {
+  const n = parseFloat(String(v || '').trim());
+  return Number.isFinite(n) ? n : NaN;
+}
+
+function indexMap(headers) {
+  const m = {};
+  headers.forEach((h, i) => { m[h] = i; });
+  return m;
+}
+
+function markerStyle(type) {
+  const styles = {
+    'vehicle-start': { radius: 6, color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.9 },
+    'vehicle-end':   { radius: 6, color: '#67e8f9', fillColor: '#67e8f9', fillOpacity: 0.9 },
+    'pickup':        { radius: 6, color: '#22c55e', fillColor: '#22c55e', fillOpacity: 0.9 },
+    'delivery':      { radius: 6, color: '#ef4444', fillColor: '#ef4444', fillOpacity: 0.9 },
+  };
+  return styles[type] || { radius: 5, color: '#a1a1aa', fillColor: '#a1a1aa', fillOpacity: 0.9 };
+}
+
+function escapeHtml(s) {
+  return String(s).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 }

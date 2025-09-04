@@ -113,3 +113,11 @@ tbody tr:nth-child(odd) { background: rgba(255,255,255,0.02); }
 .file-row { justify-content: space-between; flex-wrap: wrap; }
 
 .footnote { margin-top: 24px; color: var(--muted); font-size: 12px; text-align: center; }
+
+.map { width: 100%; height: 520px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.legend { margin-top: 10px; display: flex; gap: 16px; align-items: center; color: var(--muted); }
+.legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 9999px; margin-right: 6px; }
+.legend .blue { background: #3b82f6; }
+.legend .cyan { background: #67e8f9; }
+.legend .green { background: #22c55e; }
+.legend .red { background: #ef4444; }
