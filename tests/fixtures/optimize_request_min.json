@@ -1,0 +1,26 @@
+{
+  "vehicles": {
+    "headers": [
+      "id","vehicle_description","capacity","start_latitude","start_longitude","end_latitude","end_longitude","shift_start","shift_end","max_tasks"
+    ],
+    "rows": [
+      ["V1","Van A","20","34.052235","-118.243683","34.052235","-118.243683","2025-09-05T08:00:00Z","2025-09-05T18:00:00Z","20"],
+      ["V2","Van B","20","33.980289","-118.225478","33.980289","-118.225478","2025-09-05T08:00:00Z","2025-09-05T18:00:00Z","20"]
+    ]
+  },
+  "shipments": {
+    "headers": [
+      "Pickup Id","Delivery Id","Description","Pickup Location Lat","Pickup Location Lng","Pickup Start Time","Pickup End Time","Delivery Location Lat","Delivery Location Lng","Delivery Start Time","Delivery End Time","Quantity","Priority"
+    ],
+    "rows": [
+      ["S1","S1","Order 1","34.0622","-118.3089","2025-09-05T09:00:00Z","2025-09-05T10:00:00Z","34.0005","-118.2810","2025-09-05T11:00:00Z","2025-09-05T14:00:00Z","5","1"],
+      ["S2","S2","Order 2","34.0407","-118.2468","2025-09-05T09:30:00Z","2025-09-05T10:30:00Z","33.9927","-118.2817","2025-09-05T12:00:00Z","2025-09-05T15:00:00Z","3","2"],
+      ["S3","S3","Order 3","34.0081","-118.3082","2025-09-05T10:00:00Z","2025-09-05T11:00:00Z","33.9878","-118.2570","2025-09-05T13:00:00Z","2025-09-05T16:00:00Z","4","3"],
+      ["S4","S4","Order 4","34.0719","-118.2619","2025-09-05T10:30:00Z","2025-09-05T11:30:00Z","34.0116","-118.2655","2025-09-05T13:30:00Z","2025-09-05T17:00:00Z","2","1"]
+    ]
+  },
+  "zones": [
+    { "type": "nogo", "polygon": [[34.0425, -118.2850],[34.0455, -118.2700],[34.0350, -118.2680],[34.0300, -118.2800]] }
+  ],
+  "options": { "use_road_routes": true, "vehicle_restrictions": { "long_vehicle": true, "max_length_m": 12 } }
+}

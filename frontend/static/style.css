@@ -121,3 +121,24 @@ tbody tr:nth-child(odd) { background: rgba(255,255,255,0.02); }
 .legend .cyan { background: #67e8f9; }
 .legend .green { background: #22c55e; }
 .legend .red { background: #ef4444; }
+.legend .nogo { background: #ef4444; border: 1px solid #991b1b; }
+.legend .fence { background: #a855f7; border: 1px solid #6b21a8; }
+
+.controls { width: 320px; margin-right: 12px; }
+.control-block { margin-bottom: 16px; }
+.control-block textarea { width: 100%; font-family: inherit; font-size: 14px; }
+
+/* Numbered step markers */
+.seq-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 12px;
+  color: #0b0f1a;
+  font-weight: 700;
+  font-size: 12px;
+  border: 2px solid rgba(0,0,0,0.4);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}

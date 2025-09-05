@@ -1,4 +1,4 @@
-// Frontend logic for uploading and previewing CSVs
+﻿// Frontend logic for uploading and previewing CSVs
 
 document.addEventListener('DOMContentLoaded', () => {
   // Elements
@@ -18,10 +18,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const downloadShipmentTemplate = document.getElementById('downloadShipmentTemplate');
   const showMapBtn = document.getElementById('showMapBtn');
   const mapSection = document.getElementById('mapSection');
+  const geocodeBtn = document.getElementById('geocodeBtn');
+  const addressInput = document.getElementById('addressInput');
+  const countryCode = document.getElementById('countryCode');
+  const geocodeStatus = document.getElementById('geocodeStatus');
+  const startNoGoBtn = document.getElementById('startNoGo');
+  const startGeofenceBtn = document.getElementById('startGeofence');
+  const finishPolygonBtn = document.getElementById('finishPolygon');
+  const clearZonesBtn = document.getElementById('clearZones');
+  const optimizeBtn = document.getElementById('optimizeBtn');
+  const optimizeStatus = document.getElementById('optimizeStatus');
+  const useRoadRoutes = document.getElementById('useRoadRoutes');
+  const vehicleLengthM = document.getElementById('vehicleLengthM');
+  const toggleRouteSteps = document.getElementById('toggleRouteSteps');
+  const toggleInputDetail = document.getElementById('toggleInputDetail');
 
   // Map state
   let mapInstance = null;
   let markersLayer = null;
+  let polygonsLayer = null;
+  window._drawState = window._drawState || { mode: null, points: [] }; // mode: 'nogo' | 'fence' | null
+
+  // Fetch config (TomTom key)
+  fetch('/api/config')
+    .then(r => r.json())
+    .then(cfg => { window._tomtomKey = cfg.tomtom_key || null; })
+    .catch(() => {});
 
   // Expected headers
   const VEHICLE_HEADERS = [
@@ -180,10 +202,108 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: mapSection.offsetTop - 10, behavior: 'smooth' });
   });
 
-  function updateMapButtonState() {
-    if (showMapBtn) {
-      showMapBtn.disabled = !(vehiclesParsed && shipmentsParsed);
+  // Geocode & plot addresses
+  geocodeBtn?.addEventListener('click', async () => {
+    const text = (addressInput?.value || '').trim();
+    if (!text) return;
+    const addresses = text.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+    if (!addresses.length) return;
+    try {
+      notify(geocodeStatus, 'Geocoding addressesâ€¦', '');
+      const res = await fetch('/api/geocode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ addresses, country: (countryCode?.value || '').trim() })
+      });
+      if (!res.ok) throw new Error('Request failed');
+      const data = await res.json();
+      try { console.log('[API] /api/geocode', { status: res.status, results: (data.results||[]).length }); } catch (e) {}
+      const results = data.results || [];
+      // Add markers for geocoded points
+      ensureMap();
+      for (const r of results) {
+        if (Number.isFinite(r.lat) && Number.isFinite(r.lng)) {
+          const marker = L.circleMarker([r.lat, r.lng], markerStyle('pickup'))
+            .bindPopup(`<strong>${escapeHtml(r.query)}</strong><br>${r.lat.toFixed(6)}, ${r.lng.toFixed(6)}`);
+          marker.addTo(window._markersLayer);
+        }
+      }
+      if (results.length) {
+        const pts = results.filter(r => Number.isFinite(r.lat) && Number.isFinite(r.lng)).map(r => [r.lat, r.lng]);
+        if (pts.length) window._mapInstance.fitBounds(L.latLngBounds(pts).pad(0.2));
+      }
+      notify(geocodeStatus, `Geocoded ${results.filter(r=>Number.isFinite(r.lat)).length}/${results.length} addresses.`, 'success');
+    } catch (e) {
+      notify(geocodeStatus, 'Failed to geocode. Check server/key.', 'error');
     }
+  });
+
+  // Zone drawing controls
+  // Layer toggles
+  toggleInputDetail?.addEventListener('change', () => {
+    ensureMap();
+    const show = !!toggleInputDetail.checked;
+    if (show) {
+      if (window._markersLayer && !mapHasLayer(window._markersLayer)) window._markersLayer.addTo(window._mapInstance);
+    } else {
+      if (window._markersLayer && mapHasLayer(window._markersLayer)) window._markersLayer.remove();
+    }
+  });
+  toggleRouteSteps?.addEventListener('change', () => {
+    ensureMap();
+    const show = !!toggleRouteSteps.checked;
+    if (show) {
+      if (window._stepsLayer && !mapHasLayer(window._stepsLayer)) window._stepsLayer.addTo(window._mapInstance);
+    } else {
+      if (window._stepsLayer && mapHasLayer(window._stepsLayer)) window._stepsLayer.remove();
+    }
+  });
+  startNoGoBtn?.addEventListener('click', () => beginDraw('nogo'));
+  startGeofenceBtn?.addEventListener('click', () => beginDraw('fence'));
+  finishPolygonBtn?.addEventListener('click', finishPolygon);
+  // Optimize routes
+  optimizeBtn?.addEventListener('click', async () => {
+    if (!vehiclesParsed || !shipmentsParsed) return;
+    ensureMap();
+    notify(optimizeStatus, 'Optimizing routes…', '');
+    try {
+      const zones = collectZones();
+      const payload = {
+        vehicles: { headers: vehiclesParsed.headers, rows: vehiclesParsed.rows },
+        shipments: { headers: shipmentsParsed.headers, rows: shipmentsParsed.rows },
+        zones,
+        options: {
+          use_road_routes: !!(useRoadRoutes?.checked),
+          vehicle_restrictions: {
+            long_vehicle: true, // treat commercial for constraints usage
+            max_length_m: parseFloat(vehicleLengthM?.value || '') || undefined,
+          }
+        },
+      };
+      const res = await fetch('/api/optimize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error('Request failed');
+      const data = await res.json();
+      try { console.log('[API] /api/optimize', { status: res.status, assignments: (data.assignments||[]).length, notice: data.notice }); } catch (e) {}
+      renderOptimizedRoutes(data);
+      renderOptimizationSummary(data);
+      let msg = 'Optimization complete.';
+      if (data.notice) msg += ' ' + data.notice;
+      notify(optimizeStatus, msg, 'success');
+    } catch (e) {
+      console.error(e);
+      notify(optimizeStatus, 'Optimization failed. Check server logs/API key.', 'error');
+    }
+  });
+  clearZonesBtn?.addEventListener('click', clearZones);
+
+  function updateMapButtonState() {
+    const ready = !!(vehiclesParsed && shipmentsParsed);
+    if (showMapBtn) showMapBtn.disabled = !ready;
+    if (optimizeBtn) optimizeBtn.disabled = !ready;
   }
 });
 
@@ -327,10 +447,19 @@ function renderMapFromData(vehiclesParsed, shipmentsParsed) {
 
   if (!window._mapInstance) {
     window._mapInstance = L.map(mapEl).setView([20, 0], 2);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(window._mapInstance);
+    // Use TomTom raster tiles if key available; otherwise fallback to OSM
+    if (window._tomtomKey) {
+      L.tileLayer('https://{s}.api.tomtom.com/map/1/tile/basic/main/{z}/{x}/{y}.png?key=' + encodeURIComponent(window._tomtomKey), {
+        subdomains: ['a', 'b', 'c'],
+        maxZoom: 20,
+        attribution: 'Map tiles &copy; TomTom'
+      }).addTo(window._mapInstance);
+    } else {
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(window._mapInstance);
+    }
   }
   const map = window._mapInstance;
 
@@ -339,7 +468,13 @@ function renderMapFromData(vehiclesParsed, shipmentsParsed) {
     window._markersLayer.remove();
   }
   window._markersLayer = L.layerGroup().addTo(map);
+  if (window._polygonsLayer) {
+    window._polygonsLayer.remove();
+  }
+  window._polygonsLayer = L.layerGroup().addTo(map);
 
+  if (window._routesLayer) { window._routesLayer.remove(); }
+  if (window._stepsLayer) { window._stepsLayer.remove(); }
   // Build points
   const vIdx = indexMap(vehiclesParsed.headers);
   const sIdx = indexMap(shipmentsParsed.headers);
@@ -411,3 +546,154 @@ function markerStyle(type) {
 function escapeHtml(s) {
   return String(s).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 }
+
+// Simple polygon drawing helpers
+function ensureMap() {
+  if (!window._mapInstance) {
+    const mapEl = document.getElementById('map');
+    if (!mapEl) return;
+    window._mapInstance = L.map(mapEl).setView([20, 0], 2);
+    if (window._tomtomKey) {
+      L.tileLayer('https://{s}.api.tomtom.com/map/1/tile/basic/main/{z}/{x}/{y}.png?key=' + encodeURIComponent(window._tomtomKey), {
+        subdomains: ['a','b','c'], maxZoom: 20, attribution: 'Map tiles &copy; TomTom'
+      }).addTo(window._mapInstance);
+    } else {
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(window._mapInstance);
+    }
+    window._markersLayer = L.layerGroup().addTo(window._mapInstance);
+    window._polygonsLayer = L.layerGroup().addTo(window._mapInstance);
+  }
+}
+
+function beginDraw(mode) {
+  ensureMap();
+  const finishPolygonBtn = document.getElementById('finishPolygon');
+  const geocodeStatus = document.getElementById('geocodeStatus');
+  const ds = (window._drawState = window._drawState || { mode: null, points: [] });
+  ds.mode = mode;
+  ds.points = [];
+  if (finishPolygonBtn) finishPolygonBtn.disabled = false;
+  notify(geocodeStatus, mode === 'nogo' ? 'Drawing No-Go polygon: click on map to add points' : 'Drawing Geofence polygon: click on map to add points', '');
+  window._mapInstance.off('click', onMapClickDraw);
+  window._mapInstance.on('click', onMapClickDraw);
+}
+
+function onMapClickDraw(ev) {
+  const ds = (window._drawState = window._drawState || { mode: null, points: [] });
+  if (!ds.mode) return;
+  const { lat, lng } = ev.latlng;
+  ds.points.push([lat, lng]);
+  if (ds._temp) { ds._temp.remove(); }
+  ds._temp = L.polyline(ds.points, { color: ds.mode === 'nogo' ? '#ef4444' : '#a855f7', dashArray: '4,4' }).addTo(window._polygonsLayer);
+}
+
+function finishPolygon() {
+  const finishPolygonBtn = document.getElementById('finishPolygon');
+  const ds = (window._drawState = window._drawState || { mode: null, points: [] });
+  if (!ds.mode || ds.points.length < 3) return;
+  if (ds._temp) { ds._temp.remove(); ds._temp = null; }
+  const color = ds.mode === 'nogo' ? '#ef4444' : '#a855f7';
+  const poly = L.polygon(ds.points, { color, fillColor: color, fillOpacity: 0.2, weight: 2 }).addTo(window._polygonsLayer);
+  poly.options._zoneType = ds.mode;
+  ds.mode = null;
+  ds.points = [];
+  if (finishPolygonBtn) finishPolygonBtn.disabled = true;
+  window._mapInstance.off('click', onMapClickDraw);
+}
+
+function clearZones() {
+  if (window._polygonsLayer) {
+    window._polygonsLayer.clearLayers();
+  }
+}
+
+// Collect zones from drawn polygons
+function collectZones() {
+  const zones = [];
+  const layer = window._polygonsLayer;
+  if (!layer) return zones;
+  (layer.getLayers() || []).forEach(l => {
+    if (typeof l.getLatLngs !== 'function') return;
+    const type = (l.options && l.options._zoneType) || 'fence';
+    const rings = l.getLatLngs();
+    const ring = Array.isArray(rings) ? (Array.isArray(rings[0]) ? rings[0] : rings) : [];
+    const poly = ring.map(p => [p.lat, p.lng]);
+    if (poly.length >= 3) zones.push({ type, polygon: poly });
+  });
+  return zones;
+}
+
+// Render optimized routes
+function renderOptimizedRoutes(resp) {
+  const map = window._mapInstance; if (!map) return;
+  if (window._routesLayer) { window._routesLayer.remove(); }
+  window._routesLayer = L.layerGroup().addTo(map);
+  if (window._stepsLayer) { window._stepsLayer.remove(); }
+  window._stepsLayer = L.layerGroup().addTo(map);
+  const assigns = resp && resp.assignments ? resp.assignments : [];
+  assigns.forEach(a => {
+    const coords = (a.route && a.route.coordinates) || [];
+    const latlngs = coords.map(c => [c[1], c[0]]);
+    const color = colorForVehicle(a.vehicle_id);
+    if (latlngs.length >= 2) {
+      L.polyline(latlngs, { color, weight: 4, opacity: 0.9 }).addTo(window._routesLayer);
+    }
+    // Stops markers with ETAs and sequence numbers
+    let seq = 1;
+    (a.stops || []).forEach(st => {
+      if (!isFinite(st.lat) || !isFinite(st.lng)) return;
+      const t = st.type;
+      const eta = st.eta || st.eta_calc;
+      const icon = L.divIcon({
+        className: 'seq-marker',
+        html: '<span style="background:' + color + ';display:inline-block;width:100%;height:100%;border-radius:12px;line-height:18px;">' + seq + '</span>',
+        iconSize: [22, 22],
+        iconAnchor: [11, 11]
+      });
+      const m = L.marker([st.lat, st.lng], { icon })
+        .bindPopup('<strong>' + escapeHtml(String(a.vehicle_id)) + ' - ' + escapeHtml(String(t)) + '</strong><br>' + st.lat.toFixed(6) + ', ' + st.lng.toFixed(6) + (eta ? ('<br>ETA: ' + escapeHtml(String(eta))) : ''));
+      m.addTo(window._stepsLayer);
+      seq++;
+    });
+  });
+  // Respect layer toggles
+  var stepsToggle = document.getElementById('toggleRouteSteps');
+  if (stepsToggle && !stepsToggle.checked && window._stepsLayer) { window._stepsLayer.remove(); }
+  var inputToggle = document.getElementById('toggleInputDetail');
+  if (inputToggle && !inputToggle.checked && window._markersLayer) { window._markersLayer.remove(); }
+}
+
+function mapHasLayer(layer) {
+  try { return !!window._mapInstance && window._mapInstance.hasLayer(layer); } catch (e) { return false; }
+}
+
+function renderOptimizationSummary(resp) {
+  const el = document.getElementById('optimizeSummary');
+  if (!el) return;
+  const summary = resp && resp.summary ? resp.summary : {};
+  const assigns = resp && resp.assignments ? resp.assignments : [];
+  const rows = [];
+  rows.push(`<div class="table-scroll"><table><thead><tr><th>Vehicle</th><th>Distance</th><th>Time</th><th>Stops</th></tr></thead><tbody>`);
+  for (const a of assigns) {
+    const m = a.metrics || {}; const km = (m.distance_m || 0) / 1000;
+    const mins = (m.time_s || 0) / 60;
+    rows.push(`<tr><td>${escapeHtml(String(a.vehicle_id))}</td><td>${km.toFixed(2)} km</td><td>${mins.toFixed(1)} min</td><td>${(a.stops||[]).length}</td></tr>`);
+  }
+  rows.push(`</tbody></table></div>`);
+  const totalKm = summary.total_distance_km != null ? summary.total_distance_km : (assigns.reduce((s,a)=>s+((a.metrics&&a.metrics.distance_m)||0),0)/1000);
+  const totalMin = summary.total_time_min != null ? summary.total_time_min : Math.round(assigns.reduce((s,a)=>s+((a.metrics&&a.metrics.time_s)||0),0)/60);
+  rows.push(`<div class="status">Total Distance: <strong>${Number(totalKm).toFixed(2)} km</strong> &nbsp; | &nbsp; Total Time: <strong>${Number(totalMin).toFixed(0)} min</strong></div>`);
+  el.innerHTML = rows.join('\n');
+}
+
+function colorForVehicle(id) {
+  const s = String(id || 'veh');
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  const hue = h % 360;
+  return `hsl(${hue}, 75%, 55%)`;
+}
+
+
+
+
