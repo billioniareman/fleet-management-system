@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const optimizeStatus = document.getElementById('optimizeStatus');
   const useRoadRoutes = document.getElementById('useRoadRoutes');
   const vehicleLengthM = document.getElementById('vehicleLengthM');
+  const nbApiKey = document.getElementById('nbApiKey');
+  const ttApiKey = document.getElementById('ttApiKey');
   const toggleRouteSteps = document.getElementById('toggleRouteSteps');
   const toggleInputDetail = document.getElementById('toggleInputDetail');
 
@@ -279,6 +281,8 @@ document.addEventListener('DOMContentLoaded', () => {
             max_length_m: parseFloat(vehicleLengthM?.value || '') || undefined,
           }
         },
+        nb_api_key: (nbApiKey?.value || '').trim() || undefined,
+        tt_api_key: (ttApiKey?.value || '').trim() || undefined,
       };
       const res = await fetch('/api/optimize', {
         method: 'POST',
@@ -292,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
       renderOptimizationSummary(data);
       let msg = 'Optimization complete.';
       if (data.notice) msg += ' ' + data.notice;
+      if (data.provider_error) msg += ' Provider: ' + String(data.provider_error).slice(0,300);
       notify(optimizeStatus, msg, 'success');
     } catch (e) {
       console.error(e);

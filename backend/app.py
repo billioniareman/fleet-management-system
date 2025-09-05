@@ -54,7 +54,7 @@ async def geocode(payload: dict):
     Batch geocode a list of free-text addresses via TomTom Search API.
     payload: { "addresses": ["..."], "country": "IN" }
     """
-    tomtom_key = os.environ.get("TOMTOM_API_KEY") or "kKgEbu6mJhXR5MFTfMCoREBnvdgZb0qE"
+    tomtom_key = os.environ.get("TOMTOM_API_KEY")
     if not tomtom_key:
         raise HTTPException(status_code=500, detail="TOMTOM_API_KEY not configured on server")
 
@@ -180,29 +180,35 @@ async def optimize(payload: Dict[str, Any]):
     vehicles = [_map_vehicle_row(v_headers, r) for r in v_rows]
     shipments = [_map_shipment_row(s_headers, r) for r in s_rows]
 
-    nb_key = os.environ.get("NEXTBILLION_API_KEY") or "bf321858e11c473a853fe11ecdd34a16"
+    # Prefer explicit key passed in request for testing, else env
+    nb_key = (payload.get("nb_api_key") or "").strip() or os.environ.get("NEXTBILLION_API_KEY")
     using_mock = False
     result = None
 
     if nb_key:
         try:
-            # Tentative NextBillion endpoint; may differ in production. Fallback to mock on error.
             nb_url = "https://api.nextbillion.io/route-optimization"
-            body = {
-                "vehicles": vehicles,
-                "shipments": shipments,
-                "constraints": {
-                    "no_go_zones": [z for z in zones if (z.get("type") == "nogo")],
-                    "geofences": [z for z in zones if (z.get("type") == "fence")],
-                    "vehicle_restrictions": options.get("vehicle_restrictions", {}),
-                },
-            }
-            data = json.dumps(body).encode("utf-8")
+            nb_body = _build_nextbillion_payload(vehicles, shipments, zones, options)
+            data = json.dumps(nb_body).encode("utf-8")
             req = urllib.request.Request(nb_url, data=data, method="POST")
             req.add_header("Content-Type", "application/json")
-            req.add_header("X-API-KEY", nb_key)
-            with urllib.request.urlopen(req, timeout=25) as resp:
-                result = json.loads(resp.read().decode("utf-8"))
+            req.add_header("x-api-key", nb_key)
+            try:
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    result = json.loads(resp.read().decode("utf-8"))
+            except urllib.error.HTTPError as he:
+                err_text = he.read().decode("utf-8", errors="ignore") if hasattr(he, 'read') else str(he)
+                logger.warning("NextBillion HTTP %s: %s", getattr(he, 'code', '?'), err_text)
+                # Try alternate header casing once for auth issues
+                if getattr(he, 'code', None) == 401:
+                    req = urllib.request.Request(nb_url, data=data, method="POST")
+                    req.add_header("Content-Type", "application/json")
+                    req.add_header("X-API-KEY", nb_key)
+                    with urllib.request.urlopen(req, timeout=30) as resp2:
+                        result = json.loads(resp2.read().decode("utf-8"))
+                else:
+                    result = {"provider_error": err_text}
+                    using_mock = True
         except Exception as e:
             logger.warning("NextBillion API error: %s", e)
             using_mock = True
@@ -211,13 +217,16 @@ async def optimize(payload: Dict[str, Any]):
 
     if using_mock:
         result = _mock_optimize(vehicles, shipments)
-        result["notice"] = "Mock optimization used (NEXTBILLION_API_KEY missing or API call failed)."
+        result["notice"] = "Mock optimization used (NEXTBILLION_API_KEY missing or provider returned error)."
+        if nb_key and isinstance(result, dict):
+            result.setdefault("provider_error", "Provider call failed; check server logs for details.")
 
     # Optional: enrich geometry with TomTom Routing if requested
     enrich = bool(options.get("use_road_routes", True))
+    tt_key_override = (payload.get("tt_api_key") or "").strip() or os.environ.get("TOMTOM_API_KEY")
     if enrich:
         try:
-            result = _enrich_routes_with_tomtom(result, zones, options)
+            result = _enrich_routes_with_tomtom(result, zones, options, tt_key_override)
         except Exception:
             # Swallow enrichment errors; return base result
             pass
@@ -354,12 +363,53 @@ def _mock_optimize(vehicles: List[Dict[str, Any]], shipments: List[Dict[str, Any
     return {"summary": {"total_distance_km": 0.0, "total_time_min": 0}, "assignments": assignments}
 
 
-def _enrich_routes_with_tomtom(result: Dict[str, Any], zones: List[Dict[str, Any]], options: Dict[str, Any]) -> Dict[str, Any]:
+def _build_nextbillion_payload(vehicles: List[Dict[str, Any]], shipments: List[Dict[str, Any]], zones: List[Dict[str, Any]], options: Dict[str, Any]) -> Dict[str, Any]:
+    """Best-effort mapping to NextBillion payload shape. Adjust fields as required by your NB account."""
+    nb_vehicles = []
+    for v in vehicles:
+        nb_vehicles.append({
+            "id": v.get("id"),
+            "start_location": {"lat": v.get("start", {}).get("lat"), "lng": v.get("start", {}).get("lng")},
+            "end_location": {"lat": v.get("end", {}).get("lat"), "lng": v.get("end", {}).get("lng")},
+            "capacity": v.get("capacity"),
+            "time_window": [v.get("shift", {}).get("start"), v.get("shift", {}).get("end")],
+            "max_tasks": v.get("max_tasks"),
+        })
+    nb_shipments = []
+    for s in shipments:
+        nb_shipments.append({
+            "id": s.get("pickup", {}).get("id") or s.get("delivery", {}).get("id"),
+            "pickup": {
+                "location": {"lat": s.get("pickup", {}).get("lat"), "lng": s.get("pickup", {}).get("lng")},
+                "time_window": s.get("pickup", {}).get("time_window"),
+            },
+            "delivery": {
+                "location": {"lat": s.get("delivery", {}).get("lat"), "lng": s.get("delivery", {}).get("lng")},
+                "time_window": s.get("delivery", {}).get("time_window"),
+            },
+            "quantity": s.get("quantity"),
+            "priority": s.get("priority"),
+        })
+    nb_constraints = {
+        "no_go_zones": [z for z in zones if (z.get("type") == "nogo")],
+        "geofences": [z for z in zones if (z.get("type") == "fence")],
+        "vehicle_restrictions": options.get("vehicle_restrictions", {}),
+    }
+    return {
+        "vehicles": nb_vehicles,
+        "shipments": nb_shipments,
+        "constraints": nb_constraints,
+        "options": {"return_geometry": True}
+    }
+
+
+def _enrich_routes_with_tomtom(result: Dict[str, Any], zones: List[Dict[str, Any]], options: Dict[str, Any], tt_key: str | None) -> Dict[str, Any]:
     """
     For each assignment, replace straight-line geometry with TomTom routing-based polyline across consecutive stops,
     honoring avoidAreas (from no-go zones) and basic vehicle restriction params when available.
     """
-    tt_key = os.environ.get("TOMTOM_API_KEY")
+    # prefer explicit key
+    tt_key = tt_key or os.environ.get("TOMTOM_API_KEY")
     if not tt_key:
         return result
 
