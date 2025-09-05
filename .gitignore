@@ -1,0 +1,38 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+myenv/
+env/
+venv/
+
+# Node modules (if using Node.js or npm/yarn in frontend later)
+node_modules/
+
+# CSV input/output files (optional, if generated or shouldn't be tracked)
+*.csv
+
+# Logs
+*.log
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+
+# VS Code settings
+.vscode/
+
+# Environment variables
+.env
+
+# Python-specific
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Frontend build (if any build step is used like React/Vite later)
+frontend/static/dist/
+frontend/static/build/
