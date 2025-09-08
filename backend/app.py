@@ -1,8 +1,10 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-import os
 import json
 from loc_to_cor import batch_coordinates, GeocodeError
 from typing import  Dict, Any
