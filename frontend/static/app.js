@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const ttApiKey = document.getElementById('ttApiKey');
   const toggleRouteSteps = document.getElementById('toggleRouteSteps');
   const toggleInputDetail = document.getElementById('toggleInputDetail');
+  const expandMapBtn = document.getElementById('expandMapBtn');
 
   // Map state
   let mapInstance = null;
@@ -203,6 +204,45 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 0);
     window.scrollTo({ top: mapSection.offsetTop - 10, behavior: 'smooth' });
   });
+
+  // Fullscreen Map toggle
+  expandMapBtn?.addEventListener('click', () => {
+    ensureMap();
+    const mapEl = document.getElementById('map');
+    if (!mapEl) return;
+    const isFs = mapEl.classList.contains('fullscreen');
+    if (isFs) {
+      exitMapFullscreen();
+    } else {
+      enterMapFullscreen();
+    }
+  });
+
+  function enterMapFullscreen() {
+    const mapEl = document.getElementById('map');
+    if (!mapEl) return;
+    mapEl.classList.add('fullscreen');
+    let btn = document.getElementById('exitMapFullscreenBtn');
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.id = 'exitMapFullscreenBtn';
+      btn.className = 'map-exit-btn primary';
+      btn.textContent = 'Exit Fullscreen';
+      btn.addEventListener('click', exitMapFullscreen);
+      document.body.appendChild(btn);
+    } else {
+      btn.style.display = 'inline-block';
+    }
+    setTimeout(() => { try { window._mapInstance?.invalidateSize(true); } catch (e) {} }, 200);
+  }
+
+  function exitMapFullscreen() {
+    const mapEl = document.getElementById('map');
+    if (mapEl) mapEl.classList.remove('fullscreen');
+    const btn = document.getElementById('exitMapFullscreenBtn');
+    if (btn) btn.style.display = 'none';
+    setTimeout(() => { try { window._mapInstance?.invalidateSize(true); } catch (e) {} }, 200);
+  }
 
   // Geocode & plot addresses
   geocodeBtn?.addEventListener('click', async () => {
