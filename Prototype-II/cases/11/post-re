@@ -1,0 +1,170 @@
+curl --location 'https://api.nextbillion.io/optimization/v2?key=bf321858e11c473a853fe11ecdd34a16' \
+--header 'Content-Type: application/json' \
+--data '{
+  "description": "R6 — 2 depots, 6 drops, zones with allowed_zones per vehicle",
+  "locations": {
+    "id": 106,
+    "location": [
+      "-26.2041,28.0473",
+      "-33.9249,18.4241",
+      "-26.1710,28.0473",
+      "-26.2023,28.0436",
+      "-25.7479,28.2293",
+      "-33.9344,18.8610",
+      "-33.9180,18.4233",
+      "-33.9500,18.6000"
+    ],
+    "approaches": ["unrestricted","unrestricted","curb","curb","curb","curb","curb","curb"]
+  },
+  "depots": [
+    { "id": "depot-jhb", "location_index": 0, "description": "Johannesburg DC" },
+    { "id": "depot-ct",  "location_index": 1, "description": "Cape Town DC" }
+  ],
+  "vehicles": [
+    {
+      "id": "truck-jhb-1",
+      "start_depot_ids": ["depot-jhb"],
+      "end_depot_ids": ["depot-jhb"],
+      "capacity": [10],
+      "profile": "truck_profile",
+      "allowed_zones": [201]
+    },
+    {
+      "id": "truck-ct-1",
+      "start_depot_ids": ["depot-ct"],
+      "end_depot_ids": ["depot-ct"],
+      "capacity": [10],
+      "profile": "truck_profile",
+      "allowed_zones": [202]
+    }
+  ],
+  "jobs": [
+    { "id": "J1", "location_index": 2, "delivery": [2], "service": 240 },
+    { "id": "J2", "location_index": 3, "delivery": [2], "service": 240 },
+    { "id": "J3", "location_index": 4, "delivery": [1], "service": 240 },
+    { "id": "J4", "location_index": 5, "delivery": [2], "service": 240 },
+    { "id": "J5", "location_index": 6, "delivery": [1], "service": 240 },
+    { "id": "J6", "location_index": 7, "delivery": [2], "service": 240 }
+  ],
+  "options": {
+    "objective": { "travel_cost": "distance" },
+    "routing": {
+      "profiles": {
+        "truck_profile": {
+          "mode": "truck",
+          "truck_weight": 12000,
+          "truck_size": "250,250,900",
+          "hazmat_type": ["general"]
+        }
+      }
+    }
+  },
+  "zones": [
+    {
+      "id": 201,
+      "description": "Gauteng operating zone",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[27.5,-26.6],[29.1,-26.6],[29.1,-25.6],[27.5,-25.6],[27.5,-26.6]]]
+      }
+    },
+    {
+      "id": 202,
+      "description": "Western Cape operating zone",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[18.2,-34.2],[19.3,-34.2],[19.3,-33.4],[18.2,-33.4],[18.2,-34.2]]]
+      }
+    }
+  ]
+}
+'
+
+Request : R6 — simple zones + truck profile (2 depots, 6 drops)
+
+{
+  "description": "R6 — 2 depots, 6 drops, zones with allowed_zones per vehicle",
+  "locations": {
+    "id": 106,
+    "location": [
+      "-26.2041,28.0473",
+      "-33.9249,18.4241",
+      "-26.1710,28.0473",
+      "-26.2023,28.0436",
+      "-25.7479,28.2293",
+      "-33.9344,18.8610",
+      "-33.9180,18.4233",
+      "-33.9500,18.6000"
+    ],
+    "approaches": ["unrestricted","unrestricted","curb","curb","curb","curb","curb","curb"]
+  },
+  "depots": [
+    { "id": "depot-jhb", "location_index": 0, "description": "Johannesburg DC" },
+    { "id": "depot-ct",  "location_index": 1, "description": "Cape Town DC" }
+  ],
+  "vehicles": [
+    {
+      "id": "truck-jhb-1",
+      "start_depot_ids": ["depot-jhb"],
+      "end_depot_ids": ["depot-jhb"],
+      "capacity": [10],
+      "profile": "truck_profile",
+      "allowed_zones": [201]
+    },
+    {
+      "id": "truck-ct-1",
+      "start_depot_ids": ["depot-ct"],
+      "end_depot_ids": ["depot-ct"],
+      "capacity": [10],
+      "profile": "truck_profile",
+      "allowed_zones": [202]
+    }
+  ],
+  "jobs": [
+    { "id": "J1", "location_index": 2, "delivery": [2], "service": 240 },
+    { "id": "J2", "location_index": 3, "delivery": [2], "service": 240 },
+    { "id": "J3", "location_index": 4, "delivery": [1], "service": 240 },
+    { "id": "J4", "location_index": 5, "delivery": [2], "service": 240 },
+    { "id": "J5", "location_index": 6, "delivery": [1], "service": 240 },
+    { "id": "J6", "location_index": 7, "delivery": [2], "service": 240 }
+  ],
+  "options": {
+    "objective": { "travel_cost": "distance" },
+    "routing": {
+      "profiles": {
+        "truck_profile": {
+          "mode": "truck",
+          "truck_weight": 12000,
+          "truck_size": "250,250,900",
+          "hazmat_type": ["general"]
+        }
+      }
+    }
+  },
+  "zones": [
+    {
+      "id": 201,
+      "description": "Gauteng operating zone",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[27.5,-26.6],[29.1,-26.6],[29.1,-25.6],[27.5,-25.6],[27.5,-26.6]]]
+      }
+    },
+    {
+      "id": 202,
+      "description": "Western Cape operating zone",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[18.2,-34.2],[19.3,-34.2],[19.3,-33.4],[18.2,-33.4],[18.2,-34.2]]]
+      }
+    }
+  ]
+}
+
+
+respone : 
+{
+    "id": "d7c96fc2498f14395f7d49f214098411",
+    "message": "Optimization job created",
+    "status": "Ok"
+}

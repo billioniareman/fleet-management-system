@@ -1,0 +1,205 @@
+curl --location 'https://api.nextbillion.io/optimization/v2/result?id=cbbe1b1d9a6a339d4e3e2d26bbad5ec4&key=bf321858e11c473a853fe11ecdd34a16' \
+--header 'Content-Type: application/json'
+
+
+response 
+{
+    "description": "R5 — 2 depots, 7 drops, capacities + breaks + max_tasks",
+    "result": {
+        "code": 0,
+        "summary": {
+            "cost": 194535,
+            "routes": 1,
+            "unassigned": 5,
+            "setup": 0,
+            "service": 2400,
+            "duration": 10382,
+            "waiting_time": 0,
+            "priority": 0,
+            "delivery": [
+                4
+            ],
+            "pickup": [
+                0
+            ],
+            "distance": 194535
+        },
+        "unassigned": [
+            {
+                "id": "J3",
+                "type": "job",
+                "location": [
+                    -29.8587,
+                    31.0218
+                ],
+                "reason": "cannot be served due to time window constraints in task or vehicles"
+            },
+            {
+                "id": "J4",
+                "type": "job",
+                "location": [
+                    -29.6006,
+                    30.3794
+                ],
+                "reason": "cannot be served due to time window constraints in task or vehicles"
+            },
+            {
+                "id": "J6",
+                "type": "job",
+                "location": [
+                    -33.0153,
+                    27.9116
+                ],
+                "reason": "cannot be served due to time window constraints in task or vehicles"
+            },
+            {
+                "id": "J7",
+                "type": "job",
+                "location": [
+                    -33.9608,
+                    25.6022
+                ],
+                "reason": "cannot be served due to time window constraints in task or vehicles"
+            },
+            {
+                "id": "J5",
+                "type": "job",
+                "location": [
+                    -28.7282,
+                    24.7499
+                ],
+                "reason": "cannot be served due to time window constraints in task or vehicles"
+            }
+        ],
+        "routes": [
+            {
+                "vehicle": "truck-jhb-1",
+                "cost": 194535,
+                "steps": [
+                    {
+                        "type": "start",
+                        "arrival": 1753750783,
+                        "duration": 0,
+                        "service": 0,
+                        "waiting_time": 0,
+                        "location": [
+                            -26.2041,
+                            28.0473
+                        ],
+                        "location_index": 0,
+                        "load": [
+                            4
+                        ],
+                        "distance": 0,
+                        "snapped_location": [
+                            -26.2041,
+                            28.04734
+                        ],
+                        "depot": "depot-jhb"
+                    },
+                    {
+                        "type": "job",
+                        "arrival": 1753752600,
+                        "duration": 1817,
+                        "service": 300,
+                        "waiting_time": 0,
+                        "location": [
+                            -26.2678,
+                            27.8585
+                        ],
+                        "location_index": 3,
+                        "id": "J2",
+                        "load": [
+                            2
+                        ],
+                        "distance": 25876,
+                        "internal_id": 519102973,
+                        "snapped_location": [
+                            -26.26792,
+                            27.85842
+                        ]
+                    },
+                    {
+                        "type": "job",
+                        "arrival": 1753757808,
+                        "duration": 6725,
+                        "service": 300,
+                        "waiting_time": 0,
+                        "location": [
+                            -25.7479,
+                            28.2293
+                        ],
+                        "location_index": 2,
+                        "id": "J1",
+                        "load": [
+                            0
+                        ],
+                        "distance": 116512,
+                        "internal_id": 468770116,
+                        "snapped_location": [
+                            -25.74805,
+                            28.22931
+                        ]
+                    },
+                    {
+                        "type": "break",
+                        "arrival": 1753761600,
+                        "duration": 10217,
+                        "service": 1800,
+                        "waiting_time": 0,
+                        "id": 501,
+                        "load": [
+                            0
+                        ],
+                        "description": "Lunch",
+                        "distance": 116512,
+                        "internal_id": 501
+                    },
+                    {
+                        "type": "end",
+                        "arrival": 1753763565,
+                        "duration": 10382,
+                        "service": 0,
+                        "waiting_time": 0,
+                        "location": [
+                            -26.2041,
+                            28.0473
+                        ],
+                        "location_index": 0,
+                        "load": [
+                            0
+                        ],
+                        "distance": 194535,
+                        "snapped_location": [
+                            -26.2041,
+                            28.04734
+                        ],
+                        "depot": "depot-jhb"
+                    }
+                ],
+                "service": 2400,
+                "duration": 10382,
+                "waiting_time": 0,
+                "priority": 0,
+                "delivery": [
+                    4
+                ],
+                "pickup": [
+                    0
+                ],
+                "distance": 194535,
+                "geometry": "r~|~C{~djDH?d@Ef@CJA`@CFAHAJ?bBMbAIpAIvAKx@Gj@Ez@Gv@GpBO^Cx@GtAKd@Eb@CF?N?T@hAJl@DdAJh@Db@A\\CJlBLhBFxAd@vJ@PB@XN\\PVNPJRL\\PXLPDRBR@F?V?N?N?D?J@FA?ZAJAHAREXGNEFMVO^GZSxAMfACJ?BCPE`@ETE^ETU|AYjBERIp@EV?BAJE^IXAVE~ACn@At@?J?N@h@?F?hC@xC@bA?|@?vA@nA?P@`B?x@@dB@nBDD@D@B?D@d@?P?V?^@X?~ADhAD~@@JD|@Dp@Ff@Jh@Pj@Vt@Nl@Jj@Fl@DtAFhBBd@@JP~DJlCL|AXdBADXp@LRLR\\d@ZX^XVPTJLDVJXF\\Fv@FP?L@|BDd@@d@?dBDx@B`BDH?d@@L?^B|@Dd@JLDXD`@N\\LZLXPZPVP^V^\\\\`@`@j@@@f@v@tBpDFHPXNNHJX\\VVXVVPJHJFDBFDNHB@XL\\LNDJD\\H\\H^Fh@Dl@Dt@@hFDpIFhCBfB@pA@`A@rD@R@H?T?V?X?d@@L?~@@l@?n@@x@BD?t@DfDVfALRBTDTDz@NjATxA\\n@PdAZlA`@lAd@lAh@nAl@nAp@|@h@RLHFHDn@d@bBnAPNp@j@n@l@BDRPVXZXTVJJd@f@FFtA`Bn@~@`@l@^l@d@v@j@bABD^v@Zn@LVbAdCz@dCHPv@zBf@tAl@dBJ\\`@hAJVd@dABHLRx@tAz@rAtAlBf@v@dBdCPVpCbEZd@tBzCt@fAnAjBb@n@fCtDbCnDt@fAl@|@zAxBbA|Az@tAhArBbBlDr@zAzB|ElB`ENZvFnJn@dA|@rArBpCz@dAfApAdAnApCpCDBFFpAnAjAdA~@v@v@n@JHDBD@h@\\ZR|@l@rBfAbBx@v@\\h@Th@Lf@Lj@Hj@F|@BbB?^?t@B^B`@JD@^JB@XNJDXRb@^X`@R\\\\t@Ld@Hl@Fj@@X?V?BAT?RGh@Ov@Kf@GZETEROp@Mz@Kn@CXCZGdAIfBADAL?JCh@IlBCZCj@Ch@g@vGADAJCb@C`@Gr@IbAI~@IhAg@nFa@xE[dDC^SzBADEd@O|AGt@]zDa@lEGpBOvBQjDGx@UlESpEMnCE^GhAOfCCdA?zAB~@JnAFz@Hz@Jx@Px@J\\Lb@\\z@Zv@r@tAjAtBz@zAzAtCxAvC`@fAJVBHFNFPPd@z@lB@Dd@fAdAzBl@nAZl@pBnD??vB|ChBxB|A`BxCjCpB|ANHxBvAf@XbAh@z@^bAb@LFB@lAd@D?nEdAh@H|BRr@?z@@lAG|@OTCd@IVGrAWh@GVAX?hArENj@Ll@HZNh@BLLf@Tz@DRBHVdA\\pAZlAL\\Nb@LVJVPZ@Df@v@bAbBHLXd@Vf@b@x@Vl@Td@Rf@@DN`@Pj@Rz@x@bDLd@F`@Ln@Jt@Fl@Fp@Dp@RhDVxDDh@Ff@Ff@Fh@Hf@Jj@Nt@Jj@Nh@Pl@DPHZRf@Ph@@BTj@L\\??JRVh@DFHNl@dALRXb@l@x@\\b@xDtE|@fAjDdEbAnAHJHJRTDDFHdApAb@f@fArAFF`AjA`CpCELABCHe@nCERG\\O|@Kh@GTS~@CNK`@GPIVg@|ACH[n@Sf@ABe@|@w@tAw@xAABa@p@u@nAa@r@ABo@fAs@nAk@dAo@hAIVIRKZGPI`@EZCNCTIv@?BAZ?T?L?T?PBd@@VFv@H~@@NJnANrB@P@LFt@?f@@t@?VKjDKnBWbDE\\Gh@AHq@hHO|AC\\ANMjAI~@Ef@Iz@Gp@OfBY`DMlAMrA[hDY|CCTMfAKnAQ~A_@xDG~@OtA[bDWdCKbAEh@Eb@K`AMtAGr@CTUfCa@xDGp@MtAOzAKfA[zCI~@QbBOfBCPc@pEKhACPI`AB@HBDDHHFJ@JALCJEJGHKDG@KBIEECGEGKWAw@AE?i@@K@w@Bo@DO?{CJW@e@@G@M?S@m@@_@BmBFy@DQBQFODCHEFG`@A\\AP?@CV@\\B^HfADx@B|@?`@?ZC`@Cb@E\\GTADI\\ITAB?@KVOZCDEFILW^SV[Zo@n@i@h@[\\Y\\OVEFWb@CFQf@Qj@Id@Gb@Cb@CbA?HCdAWlMiA?}AAS?i@AK@IBIJEJ?JCv@U`HGhB]xJMvDIdBErAAJGJ_@t@KRm@a@y@g@oCqAEFKDEBC?I@G\\EXA\\G~@E\\MlDGrBE`A?\\GfBGfBQ`FMjEY|IEfA?FAVKtCGfBEdBARAPA\\Cj@GbBIdCKnCEhBA@?VK~BErACn@Cl@?PMTATCLUzAIb@M`@IXUh@MXUZDDdArA~@lAZ]DKrA{CFODWt@mD@M?Q?QcA@[@uBDBM@UIWHuBDmA?SHmB@WHkCHsBHeCD{AFsA@[FgBFeBFeB@q@B[DkADsATgGNkENcFDgBHgBP_GH{BH_CFgAEEAK?S?CBIk@]wDaCqAq@i@[i@]k@_@a@Y][OKSO][[]k@m@YYMMSSKMSQGAKAEACCCAGIAECGAG?C@GBIQUKM_@g@KMS_@ISWs@Uo@Oc@Sm@Qk@GOIYQk@GWKi@Ec@G_@CSIw@Ik@AOIu@Eo@AKG{@Ce@AWIuAC]COEKGAA?GCEECIACAGAG?C@KBK@CDGDEDADACo@Eo@GeAAOGw@AO?]K{AIgAG{@G{@Gs@QiBAKWiCCIQo@IQIKIMOKUOUEOCUGOEc@Mc@Kq@Q[I}@WaBa@gAWoFuAuBi@QEUIUI}@[OEMGMGKGYOa@Ue@Y[Si@]MKWS_@[[YIIa@c@]]MMWSEAGAECEECECE?G?G?C]m@We@[g@S_@Wg@Sg@Qc@c@iAg@sA_@gAOa@M_@Ww@c@wACKAGQk@Mk@ISCIIOQSGAE?ECGGEECGAEAEAG@G@GIKGOGMCGCGEIEEIKSSa@g@[[a@]MMUO}FuDe@[YSOMMIKM_@_@YYUWSYQWWc@[k@M[M[Qa@Oc@GWIYS{@Ow@QgA}@cGOw@Ic@_@_CQgAQcACOMo@GWKa@GQIWM_@M[Wk@O[KQYc@MSIKOS_AeAWW[WUQa@WSMa@UMEKEGCKASEC@GBI?G?ICGCGCEGCGCG?C]QSIUIQCWEqDa@OCSCICQCOEWGWISGICUKAAOGQISKQKQOOKMKOMOOOO]_@UWUWQUKQY[KKUW]_@]_@KMGQEECAm@_@_@QOGSIKCg@OMCe@IcBWEAqBYcBW[EaC]GAi@Iy@MSCwASm@IC?k@IMCOCUGICa@MQCWMc@QMGWO[Ok@_@YSQQMIg@g@KIW[i@u@e@s@MWKWUk@Qc@i@eBKc@{@cDe@yASk@IGUm@[}@_@w@EG]w@KUk@kAAMUc@SYMUe@q@QW_@e@o@y@MSsBqCcC_DCCU[aBwBwBqCm@}@MOW_@GKm@cA_AmBk@iAO]Uc@g@iAUe@Sa@OEKMIIMISKIEQII?CAE?KCGCGCGEECCAACCCCCAAACAEAI?I@I?E@C@IBG@CKMKKSOQMOMw@c@cAa@s@M}@E}@Eu@Ic@Kg@QYQo@_@q@o@]k@Ug@Qg@Uu@IeAIs@OsB?O?G?S@Y@UC{@Ei@G}@Gq@Ik@Ie@Os@_AsDi@wBc@}BIu@Iy@IgAK_DG{A?S?EAK?GAQA[GyAMaCa@uEQaBYwAu@cFIg@{AqIeAmGe@_CMu@Iw@AAGo@OyACUMiAG{@Gq@AOEiAG_CCe@C{B@eD@s@Bw@BaAJsBNcB\\yCRkB\\_DEQASCUAKEGKOyL_EWCo@?e@Bc@@{@Le@Dg@?mAV}Cl@sCh@QDk@LwGrAoDt@cMfCc@JE@IBI@ODI@KBQDYFsAZc@L]Je@JODYFSDg@LaBf@mBj@qAb@sDpAuAh@m@VgDrAkJxDiFvBuAh@i@TiCdAgBt@yElBsGlCoAf@iCfAmCfAuBz@eAb@uCjAiCfAOFmFvBqFvBmAf@i@Ro@VYJs@XWJ_Ct@kCj@aC\\cCReCDg@AyBEuAE]A[A_ACy@Cw@Ak@Au@@{@@O?y@D_ADoBPgBTeB\\iB^cBd@G@cDz@iGzA[HyCt@sA\\qCp@C@aHhBg@L_AVmBl@[LUJOFMFcAf@{A|@eAt@iA|@{@x@}@|@Y\\GHGDKN_AlAeAzAeDlFWd@kB|CaFnIKPiB`D{B~DIPoA~B}EdIqBjDCF}A|BiAnA]`@g@b@wAjA}@l@KFsBfAy@ZQFaEhA_@FyAToALwAFK?kA?cBCsAK]EwB]u@QKCKCOEo@OqAc@yB{@gDuA}Am@{D}AwAk@eCcAmCgAi@SiAc@cEcBcBo@qCiAoAg@_HoCy@]QGkGgC]OgEiBw@c@gB_A}Ay@iAk@uHiEgHcEaCuAaMgHmI{E}IcFsAw@yCcB_BaAi@[a@WsA}@i@a@cBsAe@_@kCgCcAgAGEgE}EyAeBm@s@mAuAkBwByH_JY]SSm@o@a@e@a@e@wFuGsA}Ac@e@GKaFyFyAaBIKEEMQaFwFiBiBsBkBq@k@aCeBkBsAw@e@]U{Aw@g@WaDaBuAo@aBy@oB_Am@YeAi@gB{@e@UeAi@cGuCcFaCy@a@kDcBSKuFmCa@SwE{B}Aw@]Q_Ae@_Bw@{As@cGuCqAk@yAk@oBo@mA_@SGC?_Ba@yBe@}Ci@wDm@IAIAOEuEu@MAgF{@kAQkB[o@KiEs@a@GOEq@KkCa@wAUkB[sCe@E?eCa@GAOCiEs@SCsCe@MC_@GQAaCa@c@IUEq@KqAUu@M}@QE?}AWm@Ii@I}AWg@K_@I}Bi@UGkCq@wBs@iAc@c@Q_Bq@aAg@q@[kDkByAw@UMIEKGECe@Us@a@gAo@mBgA_E{BWQOIy@c@}CgBq@_@e@YMIkD}BAA}BgBmBcBy@w@_DkD_@e@_BqBs@{@_GoHIKyBmCm@u@m@u@_@e@IKqJmLIMoHeJqBgCEEm@u@_BoBiAwAGIo@w@qBeCW[oA{AgCaDmB_CcC{CgGwHY_@iB}B{AiBwDwEo@w@{@gAyAiBqCiDEGoA}AeC}C_@c@eC_DuAeBmEqFsAaBmB_CcC{CMOs@_A_BuBkBqCyB}DMYgA_C]s@w@eBaAsDu@aCyBoIMi@Ss@AGCGAEACCG{@yCW_ASs@Su@wByIGYcAqFSkAOy@aA{FQcAmAqHKk@QcAg@yCi@gDk@kD{@gF]qBCKCO{A_JYsBg@_ESiCMaDG}CAoD@s@@qA@UF}A?I@UVcDLcBd@_EtAsIp@eEvAgIDUN}@fA{Gp@aEfAwGPgAf@{C`@cCn@_EDWlAmH@Kb@iERmCPaDFqC@gA@e@H_G?a@@U?G?W@_@?u@@]@_AFuH@oB?Y@g@FiEBcA?M@y@DeB?M?G@I?UBsAFqATsDFgANuAj@wEFk@@GD]f@aE?C~AsOZwCHeABU@Iz@}JTeC^mEPmBtBgWd@kFd@iF`@oEz@aLv@mId@{CRqAX}AAI?IBM^iBXmA^uAV{@b@sAf@uAx@_C^eAPa@FMb@qATu@Pe@X_AZcAT_ATaAHe@BQHu@F}@?QBa@@w@?s@Cs@ASCk@MqAO_BEe@I{@YkCU_CQeAMk@Om@YmAc@wA]eAIW[w@g@aAaAgBKUQk@QYYi@wCgFmAyBe@}@i@u@Ya@aBuBkAkAgA_A_As@IGy@e@kAm@sAo@gA]eA]kCk@kEu@uLoBqHqAwLeCEAEAQEKCwEkAOEcDu@mA]wAa@q@UaF_BgFgBeBq@iJkDeAc@o@Wu@[SGaG{B[K}CmAq@Y}B{@eCaA_E}A{Ak@OGi@Sg@SGCKESGsBy@mCeAyB{@ICkBw@KE[ISIsAi@k@UmAe@iCaA}CkAeAa@qHuCc@Qa@MuAg@uC}@_Cm@oEaAUEuB_@iBW_@Gm@GqBSuBSQAm@Cs@Ga@C]AiAEgBEqAEUAyAC}AAmAGiCI_BK}@GSAuAMs@Gs@I}AQ}AQyAScAQIAk@KkAUcB[gCe@aWgF_Ey@}A[aASm@M_ASu@Q}@Q}Dy@GCcASeFeAgB_@OEyAYiB_@kBa@cBa@mAWMCGAEAKCEAoFkA}EcAsNyC_GkAoAY{@QeB_@aAS{Cq@kDu@IAuDw@kDs@{Cm@gE}@sDw@{Dy@_JkB{Dw@}N}CQE]GuIgBaDo@kLcCcB_@wA[[GUEsDy@cASeDy@m@OuDy@uA]aCk@cOyDaPqEoNmE{IuCsIyCuAi@kK}DQGcBo@{B}@w@[m@UyEoBMEoAi@wHeDuB_AaFwByDiBWMqGyCaEsB}H}DuKyF{@c@gAm@UO_Ag@oHcEA?mBeAQKwAu@gFsCs@a@eE}BaFoCuLqGqAs@QI{GqDsHcEyEkC_FmCWMkAq@OIq@_@k@[y@c@}Au@yE{ByHiDgG}BIEIC{DyAo@UoBo@uAe@KC}@[}CcAe@O}Bk@sJeC_ASwDw@a@IqEaAgEq@g@K_@EgCa@oAS}HmAi@IOC}@O_Fw@aBYe@IUEMDG?M@uIgAcAOo@G_AIkAIu@Em@CC?mACG?c@@e@?wAHe@BiANyAXq@LiAVSDk@Hk@Dm@BS@]@]?q@Cm@GSC}@S}@[y@a@e@[c@[}@aA]e@[g@KSKSUi@Qk@Q{@CGEa@Gc@AMCYEc@AkA?y@?O?yBAq@OuCIsAg@gEQgAYkA[wAm@eCEQ?UoBmFOa@Ws@kAgDoEgMGO{BkGeDiJmCsHo@iBeEiLu@uBM]y@{BQg@eAyCUq@{AiEwAaEIUEOQe@Qg@y@}BoAkDGQm@cBu@qBIU}AiE}BoHK_@EKo@iCCK_AsDUaASw@}@}DyAgHwAeJAGa@oCE]COMu@Iy@_BoNCUCYkAqKqAoLk@mFE]Go@YiCm@kDe@gCy@sDyAeFCEiAaDISO_@yA{CUg@kBmDs@eAq@cAMQGKOSw@}@{@eAQQsC}CiC{BiBuA_BkAoBmAgBcAiBy@_Ac@oAg@yAi@aDcAwCy@qBm@sEqAqBk@aCq@qDiAuBs@KE}B}@}@_@yB_AeD}A{BoAs@a@oBmAcAq@_DuB[UyDyCqEeEgEaEQQOMKK_D_D}A{AwCqCi@i@MMg@e@_BaBaB{AqBqBkBkBwAuAqBkBaC_CoBmBc@_@]a@k@i@SS]_@USQS][aCiCKISSoAmAcBeBo@m@_@]cBaBkBgBaBcBoAmAQO_A_A_@]OOSQ[[i@k@_C_CuBsB_C}BkCgC_AaAa@[qBeBEGUOIIOKOMaBsAoCqBeD{Bi@[yA}@gCuAmBaAECsDaBuDyAy@[UIs@WoF{AqEoAg@MaDy@sCs@[IICICICIAoGgBiEeAyHuByA_@e@MMCgA_@yCaAkDqAgAa@uFcC{DmBgEaC_@SECmC_Bw@i@KGyCmBaEkCgFaDw@i@kBmAOKECu@c@OIe@Wk@_@_Bs@]OiDwAcBq@qBs@e@OQGcEcAsAWk@KiAQw@Km@I_AMiDi@o@KuB]{AWc@EMCICKCIAGA_AQs@MwDu@mCk@}FaAy@KmAQy@K}Dg@EAoAUy@OQE_@GGAAAkAU{@U[EGAi@Ia@G]EuCi@wFq@QCsB[wB]wCg@oGeAaDi@oB[wGiAq@Ii@KyCe@SE{B[s@Mw@M_@IKAgAS}ASqAUc@Es@GmBE]A_DE{Lv@}AJgAHy@Ds@DuAH_@B_AF]BoBLsAHC?yAJK?gAHeCL_DTuALKBkAPuB^mBf@oBn@wAf@m@V}At@{Ax@_B`AQLoA`Ai@^EDc@`@GFUR]\\}A~AML{B`Ce@f@mBlBEJUTgBvBMLsAdBuBpCcAlAIHKH]\\YZmAdAqAfAGLGN_AjA}BdCuBxB{AbBs@rA_@v@ELQn@UbAK~AA~@?r@B\\Dr@FpABRAFNzAP|AX`CZtCL`CDx@@J@`@H`CBb@Dl@CR@P@f@@DRnFHlBJfBJfBBJD`@NhABHLx@`AbD\\fAp@vBBHHZNd@|@hCTz@J\\f@dBP`ADn@?JBR?@@\\?LFjB?JLzDBt@@ZBv@J|DN`FBfAJvCHzCLzD@h@FjBDzABv@JvDBj@L~D?XDtAHlCPvFPnF@XPtHHtCBj@NfFLrFlHY`HWYqJE}AAm@IeCQmFM{BU@sBJK?eCJ]gNIaCIwBEwAA]IuBCeAOkFAY?SGgCCa@A{@AQAQCk@?GA[AUGcBEeBAQAg@E{AIaAEu@Cc@Qy@K_@m@oCEQMi@EO_@}AEU_@aBGSw@gDIYKe@m@gCK_@Uy@GMk@aAy@s@??w@s@sAqAMMk@{@_@_AM_@M_@Q{@Iy@GmBEaAAU?QE{@ScGEy@OkCIcBQaDCe@CGKaAM_AQeAQcASaAKo@CMMu@Oq@Ms@UsAMs@EUEWQcAK{@Gi@Eo@EqAKeCAy@C}@QoFE{@Ae@Aq@A_@AQAEIgAGg@KYMQOOUKYEY?WFSHOPMVGVCZB\\JZNRNNRJVFX@f@AF?x@K^E`@A`@GTEn@KlAS~Ag@nA_@|Am@rAo@bBaA~AiAz@w@n@i@dD_DjDkDbCoBDC\\_@l@m@xGeHp@o@FEPOt@q@dA{@h@]`@YJG~CiBrB}@TMt@[bA_@dCs@~Bg@dB[p@Gb@Gn@G`@EpBOzE]^ATAHA`CMnBMD?rAKb@CzAGt@E|BMpO}@tBCT?`BDjCN\\Dx@JpBZbANJB`@F`@FdBXRB`@Fj@Jx@LlEt@fCd@hANj@H^H`Ep@|Et@lGdArB\\LBTBlBXpATxDl@zB`@z@LLB^Dl@Hj@Hj@J\\FNBXDb@Hz@Lx@NXDrGjAn@H|GdA|B^pARLBr@LhBXlARHBF@F@F@D@H@pBZLBfBXrF~@RBvGhARDrEdAD@vCz@F@xDvApCnAhB~@bB|@|@h@DDl@\\p@d@XP|BxArIrF~CpB~ExCRLd@VfDlBxDhB\\P`HxClDlAl@RlA^zBp@pGhBfEhAtD`AxEjAr@PHBJBF@xBj@x@TxCv@rFxAbCv@bA\\dA\\tCdA~Ap@vAj@XL`ClApExBzBrApBpA~AjAr@f@x@j@fBtAZXJFJJZV`ClBdCdCxBvBrIjIr@p@HHbA`AD@|AhA^XDBdBvA`@ZF@~BpBpBdBf@\\f@ZRJd@Td@N^JRDb@Jx@HlAL|Hh@P@x@FNBj@@f@?FAn@Ed@G`AUx@Wt@WRG~@]F?t@]HCjAg@\\OvAm@VKpAi@vA]FArB{@|By@\\MJEf@OpBo@l@SbBg@`FoAfBc@d@IhE{@LClEw@|HoAnCe@jDi@pEq@pG}@jBW`Ek@jBUdAMfH}@dD_@rGs@hBShBShBSXCz@Ip@IVAzAQ|Ec@pEa@bBMh@E`DY`AGjCUzAKvCS~BOvCQ~BOp@EVC~AIlBKtCOhDQjBKjBIjBItCK`CK~DOl@ARAtAE`CGvCIbCG~@AtCIR?lFM`DCJAH?L?F?nCE`EEbEC`ECtA?zEAjDAtD@P?zD?rD@vAAt@AlD@vD?dG@fC@dE@rD@lE@nE@bH@fDAbFEh@AvCGxCOnCM|AMtFe@fCYxB[tAS|Do@pCi@bCi@pD{@|EqApA_@tDoA|Bw@zEgBpCeAdFiBvGsBrDaALElEcAzDw@fB[nGaAj@GrEi@rEa@jBMtAIjDQ@?fCIL?xDG|GAjFDtEP~@B|AFhIl@|@JD@h@Dz@JxC\\jDh@hC^dC`@|Cf@p@JfFz@zGbA~GfAjGbAlFz@tDl@jFz@zDl@|Er@vAV`En@|B\\zFv@rDd@r@J|Dd@B@bD\\rAN|D^pCVhDZ~D\\xCTzDZjAHL@pCTh@F~BPj@FrCTlFb@`BLhAHfAJvBPjHj@~@HbDVxE^fDXdGd@|Eb@nE\\xE^bCTf@DpFb@rCRtE^nD\\|AJz@FnAJxHl@tE`@bBJvDZ|@Fh@DdE`@`BJN@~BRl@FpE\\VB`DXhF`@rDXlGh@bF`@xDXrDZpBPlDZhBH`ADhBBtCKvCUpASlBc@jBk@`Bo@~@a@`@Qj@WhGuC|DmBjB{@rAo@tEwBdCmArEwB`DyA`Ae@fAi@|Au@j@YDClB}@`GoCjMcG`EkBfBy@vAq@jAi@~@_@lAc@nA_@f@Oj@Q|Bg@~A_@f@MZGlGyA`FkAzA]zG}AvA]v@S|@WHERGXKLEl@Ut@_@NG^SNGbAk@z@m@x@k@?A~IiGnBuAzAeAJI^W~AiAh@_@fBqA~AiAjBqAhE{C|FcE`FkDjE{C~DqCvCuBPMbD{BvEeD|@o@RMNMNIjE}ClDcCpIaG|EiDlGmEbFaDtA{@~@c@hA_@t@[hA_@rAa@dAWfASfAMzAM|@EfBChBAjABpALnALfARdAR~@VjA^rAd@bC~@`E|A|CjAnDpAzHvClE`BxBz@pDtApGbCvIbDf@PzBz@\\Lv@ZnAd@bC~@pBt@VHdBp@\\Lv@XzAj@rA`@pA\\tAXpAVnC\\vKjAdIx@F?PB|ANbMpAbAJ~D`@xARv@JNBx@PlB^tGvA`Dr@f@JzDx@fAT~@Rt@PnAXxA^`B`@pBh@jA`@jAb@t@\\n@ZNHj@VjAp@pAz@z@n@`Av@dA|@p@l@t@z@r@x@nBnCRXBBLRb@r@NVZj@|AnCfApBR\\jAvBJP~AtCjAtBNXVd@R\\t@tAf@x@r@tAj@dAj@hAR`@HNh@nAHRP^LZBFP^\\z@Xv@z@bC|@zCJ\\^pAd@jBFVDNVhAr@zCJZjAbFdArENv@ZlADN~@~Dh@xBz@nDTr@`@pAp@nBfAlCTf@rApCXf@vBnDbB`CX^FHDFhBpBzBzBnBlBxAhAhBnAf@Zj@\\~BrAf@ZbCdAfAb@nBt@tBn@XH|A^fAVdBXjAL|APbHp@hCRd@DPBhDZfKbA|CXtBR`Ff@p@FJ@rAXfCv@B@PHv@^DBz@j@n@`@NLfCrCDFlAhBJPhAtBzDnHT`@rFjKfA`CfBrEb@hAf@hBPp@@HPj@v@~DPdAT|A@JPdBH~@?@Fl@@JFr@FxD?tBIdEeCxOc@|BGb@EPgAfGi@zCs@vDCJ]zCMdCGvC?d@@pB?FJxB@V@Db@dE@Jn@`Dd@fBpApD~@rBdDxFbCzDhDxF|AfCNXpAvBxCzEzAdC|AhC|@zAvA~B~FrJb@t@PXr@jArEpHdAfBn@bAjB|Cr@lAjCfEBDBDrCtEvA|CxCxHr@jBBFXx@bJvUdEtKfCrGfGdPP`@vAtDFLvDzJz@tBL^z@xBhBrEFN|@`BV^d@r@~@dATZh@l@PTNPvAfBRX|ApBJL@BlApBVb@~E~I\\l@LTvChFLRT^DFj@dApAlBJNh@n@p@v@TVnDtDx@x@xAvAVVDDtAzAHJ`@^bA`ANNv@t@@@lA~@NLbAp@zAdA`BhAl@`@PLJHPPd@b@n@z@FJVf@FJJTVr@?BPx@L|@@j@Bx@?LAfAO`CARALg@nGIjCHxCV`Dl@dEr@nCVfA@Fb@pA\\|@FP~@bCBHLZBJtAxDBHDLp@rCj@hDtA|Ip@lED@BDBFNdAZ`BJd@b@tBd@jBDLt@`Cr@pBr@xAPVDFDDDDFD@@v@dAVZbBdBzCtCtCpCnEhExApAfAp@zAn@lA\\`BVdAFxA@`CMJ?B?FBx@MPCfBm@v@_@j@WRKpFsCzAs@t@]l@QPGFAz@WxAWl@GbAK@?LAt@CbAGjEOtDO`FQj@AlAErAGrCKrCO@?tBEdAAv@@b@@p@Dj@DtAP~ATtBf@NDD@bBj@~@`@t@Zd@PZNhAd@PFLFLF\\LzAj@vBz@~AZNBbBLvA?D?vAKpAUzBm@PENEpBi@FCbEeAnDaABA`AUdBe@vBq@FEp@]lAw@f@_@`@[tAaAPQROPMz@q@hAm@z@_@|@YrAYB?`C[jFm@LI`BU~@Sr@KXAFAF?n@At@An@?Z?jAFzCLvGTtCXh@Fr@Lb@NNFl@\\f@^VVNLJLHJV^Xn@Th@Pr@Lv@F|@Bn@Cv@Ev@CLCNENCLENI^[v@Wb@[b@i@l@qClCu@n@q@l@g@l@i@t@Yh@Uh@Sh@On@Mp@Ir@K~@IbAa@vF_@tFQlCAFUxE?JEz@ARGhA?NARAr@EzB@dB?L@V@nB@zC?LDpIDlGBtA?XDbGD~G@p@@r@?|@@NFhEHxNDzEH`K@tAD|FHvCHnB@PNfCHt@PlBHt@z@bIx@rHZrDLfBDj@Dr@h@nLHzALxBD`AZnGN~CBT?B?JJnBR|DLhCLvC?ZB~@?f@@x@?H?v@?V@fE?~F?zA?vE?bG?xBBlAAvAC~@?R?nBClBI`EG~CCt@?XEhBS|IGlCApAClAAvAKnJB~EFxI?fA@lBBjCBpD?vABhB?T@rBDxE@zBBhC?bA@P?J@`D@V?NBhBBdADhEBn@Ff@@D@HDb@?\\?X@F?FHt@Lj@P^LRVNN@PCPKJSBUEYQ[QQSSy@OAAYGMCGAEAIAKCQEa@K_@CIBOBWJSRABWn@ANCj@Cr@BdE?xCA|@?r@?V?v@@jB?\\AzDC|AE^E^Y|A]vBQjAEb@?Z@X]Bc@@i@EeAKm@EiAKUAO?G?c@Be@DuAJy@F_@BqBNw@F{@Fk@Dy@FwAJqAHcAHcBLK?I@G@a@BK@g@Be@DI?",
+                "internal_id": 404217899,
+                "profile": "default",
+                "adopted_capacity": [
+                    12
+                ]
+            }
+        ],
+        "routing_profiles": {
+            "default": {}
+        }
+    },
+    "status": "Ok",
+    "message": ""
+}

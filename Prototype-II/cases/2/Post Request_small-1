@@ -1,0 +1,70 @@
+curl --location 'https://api.nextbillion.io/optimization/v2?key=bf321858e11c473a853fe11ecdd34a16' \
+--header 'Content-Type: application/json' \
+--data '{
+  "description": "S1 — 1 vehicle, 2 jobs, round trip, no capacities",
+  "locations": {
+    "id": 1,
+    "location": [
+      "-26.2041,28.0473",   
+      "-26.1710,28.0473",   
+      "-26.2023,28.0436"    
+    ],
+    "approaches": ["unrestricted","curb","curb"]
+  },
+  "vehicles": [
+    {
+      "id": "van-1",
+      "start_index": 0,
+      "end_index": 0
+    }
+  ],
+  "jobs": [
+    { "id": "J1", "location_index": 1, "service": 300 },
+    { "id": "J2", "location_index": 2, "service": 300 }
+  ],
+  "options": {
+    "objective": { "travel_cost": "distance" }
+  }
+}
+'
+
+
+
+
+Request body 
+
+{
+  "description": "S1 — 1 vehicle, 2 jobs, round trip, no capacities",
+  "locations": {
+    "id": 1,
+    "location": [
+      "-26.2041,28.0473",   // 0: depot/start+end (Johannesburg-ish)
+      "-26.1710,28.0473",   // 1: job #1
+      "-26.2023,28.0436"    // 2: job #2
+    ],
+    "approaches": ["unrestricted","curb","curb"]
+  },
+  "vehicles": [
+    {
+      "id": "van-1",
+      "start_index": 0,
+      "end_index": 0
+    }
+  ],
+  "jobs": [
+    { "id": "J1", "location_index": 1, "service": 300 },
+    { "id": "J2", "location_index": 2, "service": 300 }
+  ],
+  "options": {
+    "objective": { "travel_cost": "distance" }
+  }
+}
+
+
+Response 
+{
+    "id": "da96165dad995032a3aa19c7db96619e",
+    "message": "Optimization job created",
+    "status": "Ok"
+}
+

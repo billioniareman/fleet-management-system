@@ -1,0 +1,119 @@
+https://api.nextbillion.io/optimization/v2/result?id=da96165dad995032a3aa19c7db96619e&key=bf321858e11c473a853fe11ecdd34a16
+
+Response 
+{
+    "description": "S1 — 1 vehicle, 2 jobs, round trip, no capacities",
+    "result": {
+        "code": 0,
+        "summary": {
+            "cost": 15169,
+            "routes": 1,
+            "unassigned": 0,
+            "setup": 0,
+            "service": 600,
+            "duration": 1849,
+            "waiting_time": 0,
+            "priority": 0,
+            "distance": 15169
+        },
+        "routes": [
+            {
+                "vehicle": "van-1",
+                "cost": 15169,
+                "steps": [
+                    {
+                        "type": "start",
+                        "arrival": 0,
+                        "duration": 0,
+                        "service": 0,
+                        "waiting_time": 0,
+                        "location": [
+                            -26.2041,
+                            28.0473
+                        ],
+                        "location_index": 0,
+                        "distance": 0,
+                        "snapped_location": [
+                            -26.2041,
+                            28.04734
+                        ]
+                    },
+                    {
+                        "type": "job",
+                        "arrival": 172,
+                        "duration": 172,
+                        "service": 300,
+                        "waiting_time": 0,
+                        "location": [
+                            -26.2023,
+                            28.0436
+                        ],
+                        "location_index": 2,
+                        "id": "J2",
+                        "distance": 587,
+                        "internal_id": 519102973,
+                        "snapped_location": [
+                            -26.2023,
+                            28.04362
+                        ]
+                    },
+                    {
+                        "type": "job",
+                        "arrival": 1374,
+                        "duration": 1074,
+                        "service": 300,
+                        "waiting_time": 0,
+                        "location": [
+                            -26.171,
+                            28.0473
+                        ],
+                        "location_index": 1,
+                        "id": "J1",
+                        "distance": 6310,
+                        "internal_id": 468770116,
+                        "snapped_location": [
+                            -26.17091,
+                            28.04794
+                        ]
+                    },
+                    {
+                        "type": "end",
+                        "arrival": 2449,
+                        "duration": 1849,
+                        "service": 0,
+                        "waiting_time": 0,
+                        "location": [
+                            -26.2041,
+                            28.0473
+                        ],
+                        "location_index": 0,
+                        "distance": 15169,
+                        "snapped_location": [
+                            -26.2041,
+                            28.04734
+                        ]
+                    }
+                ],
+                "service": 600,
+                "duration": 1849,
+                "waiting_time": 0,
+                "priority": 0,
+                "distance": 15169,
+                "geometry": "r~|~C{~djDC@K?[DiBPaCPW@d@bJTdD@PPjCgCPO@uBPa@BRbDVtDqAJkAJQBIHk@DoAL]BA@w@D}@HoCTc@BUD??K@k@DkCRE?G@K@I?K@G@M@_@Do@DYBaAHcBPO@WDk@Fo@FiALYD_@FqAJe@D_AHI@E@K@C@KBMHIHEDMNKLwAtBKNMJKFEBKD]FE?G@sAH_@DWBi@DK@aAHgAJMCG?GAIAAAEACCGECCCEEGCGK}BEaAGiBGMESCIAEEIECEGCCCAA?CAC?EAE?E@_@Bg@Fg@Do@Dq@Bs@@Q?e@CmBKK@I?G@m@L]FM@Q?G@I?S?{ABU?Y?K?q@CGAK?QAe@Ek@EUCQCM?IAO@I@SBKBQBUFQDYLWN_@VwA~@yA`AmAt@OJ]T[RYRC@IFy@h@w@f@g@ZcAr@u@f@_@TKFa@ZGFIFCBWVIHIJSVY\\s@v@[\\SFKNKGiAq@i@[sCcBYQaAi@SMUUW[IIYa@UWSSSOSMWISGQCOCC?]Cq@Cq@C]Em@Mo@OYIQGe@S[Qe@WCC[U_@Ye@c@_@]iAgA_@]c@e@cAaAqGkGUUEGuAuA}C{Cw@u@q@q@KK{AyAf@q@Xa@pAeBPSFI@C@C@I?GEIGG[[uAuAaE}Dj@I`Eg@JAXEx@KHAZEtAQz@KJ?L@JDb@`@ZZBD@@HCHABAF?B@b@NF@FCTMLO@G@KI}@@KFM@CDEBBBDn@p@o@q@CECCEDABGLAJH|@AJAFMNULGBGAc@OCAG?C@I@IBAACE[[c@a@KEMAK?{@JuAP[DI@y@JYDK@aEf@k@H`E|DtAtAZZFFDH?FAHABABGHQRqAdBY`@g@p@zAxAn@\\`@XTPXVd@b@zBxBp@b@\\PNDL@L?JERMZMFGNSBA@?DCPEZAXATBPBTFPJTLLNLNJPHRt@jBN\\NZRZd@j@LL`AfATXJPRb@zBvBpBnB`@^^\\ZXNLPLb@`@fA|@r@j@t@j@r@f@v@h@t@f@r@d@HDJFt@b@bC|AFDHDb@\\`Ap@~BhB^VjBzAn@f@`At@nFbEp@j@f@^\\X^XLHVR`@Z^\\ZZV\\FJBDBDFJDF\\t@Vr@h@dBLt@@FBVDVLvANrAF`@Jd@@JDLHTN\\@BDFBDRZBDDFFH@@HJDDFHBDDBTTZVf@XRJDBZJVFD@B@XFj@FRBb@@d@A\\AjAIx@GtAKbAIZCjAIZCnAKz@G`@Ah@?d@@b@@`@Bj@Dl@Dn@Db@DV@x@Fl@Bh@?TAB?JAN?NANApAWXErBc@ZIf@MTG~DcARENEp@OtBg@ZIj@Of@MVEZIv@Q`@KZI\\IzBi@BAdBa@REHCXGB?VGDALCLCnAOZC`BMHAl@E~BOZAdBMz@EZAl@EbAG|@E\\?hBEh@AdAA\\AX?XAz@AR?PAVAb@?lAChACZAXAj@?fAAjA?^?r@Ab@?TEFCB?NCL?b@AlAC`@Ef@Kf@Qf@Sd@YVSZY^e@Zc@Ta@N[Rg@BIHS@C?CH[BIHg@BUDWDo@Dy@?{@@G?KAm@CaB?OAMAaF?g@AS?qB?kA?eBCECCAC?AAC?SCc@?W?{@?i@?w@BqA?KBcABy@DkBD_C?QESESCCACEIGCEIGEMGMEKAmBAoA?W?qC@KAIEGIEIAI?K?K?m@AKEIGEGEIAWAu@FmCPU_ESeDIwAGiAO_DCYOaCGe@Gi@MyBw@F{@Fk@Dy@FwAJqAHcAHcBLK?I@G@a@BK@g@Be@DI?",
+                "internal_id": 3977904708,
+                "profile": "default"
+            }
+        ],
+        "routing_profiles": {
+            "default": {}
+        }
+    },
+    "status": "Ok",
+    "message": ""
+}
+
+
+
+
+curl --location 'https://api.nextbillion.io/optimization/v2/result?id=da96165dad995032a3aa19c7db96619e&key=bf321858e11c473a853fe11ecdd34a16' \
+--header 'Content-Type: application/json'

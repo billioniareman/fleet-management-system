@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Route Optimization Demo</title>
+  <script src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.19.0/maps/maps-web.min.js"></script>
+  <script>
+    // Configure a CSP-friendly worker to avoid blob:null errors in some setups
+    try {
+      if (window.tt && tt.mapboxgl) {
+        tt.mapboxgl.workerUrl = 'https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.19.0/maps/mapbox-gl-csp-worker.js';
+        // Disable worker to avoid blob issues
+        tt.mapboxgl.workerCount = 0;
+      }
+    } catch (_) {}
+  </script>
+  <link rel="stylesheet" href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.19.0/maps/maps.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <style>
+    body { margin: 0; font-family: Arial; }
+    #controls { padding: 10px; background: #f4f4f4; }
+    #map { height: 90vh; width: 100%; }
+    #legend { display: inline-flex; gap: 10px; align-items: center; margin-left: 12px; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #333; }
+    .legend-swatch { width: 12px; height: 12px; border-radius: 2px; display: inline-block; border: 1px solid #999; }
+  </style>
+</head>
+<body>
+  <div id="controls">
+    <label>Select Case:</label>
+    <select id="caseSelect"></select>
+    <button onclick="loadCase()">Load</button>
+    <span style="margin:0 8px;">or</span>
+    <input type="file" id="getFile" accept="application/json" />
+    <button id="loadFileBtn" type="button">Load From File</button>
+    <button onclick="initLeafletFallback()" style="margin-left: 10px; background: #e74c3c; color: white;">Use Leaflet Fallback</button>
+    <div id="legend">
+      <span class="legend-item"><span class="legend-swatch" style="background:#2ecc71"></span>Start</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:#e74c3c"></span>End</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:#1f77b4"></span>Job</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:#f39c12"></span>Pickup</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:#9b59b6"></span>Delivery</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:#666"></span>Unassigned</span>
+    </div>
+  </div>
+  <div id="map"></div>
+
+  <script>
+    const apiKey = "5XhvsvuYwIVaIs9EJdyaQMu20vl0ScpL"; // Your TomTom API key
+    const backendUrl = "http://127.0.0.1:8000"; // FastAPI backend
+
+    // Fallback flag and shared map handle
+    window.USE_LEAFLET = false;
+    window._leafletOverlays = [];
+    let map;
+
+    try {
+    const mapInit = tt.map({
+      key: apiKey,
+      container: "map",
+      center: [28.0473, -26.2041],
+      zoom: 5,
+      style: 'tomtom://vector/1/basic-main'
+    });
+    map = mapInit;
+    
+    // Add error handling for map load
+    map.on('error', (e) => {
+      console.error('TomTom map error:', e);
+      if (e.error && e.error.message && e.error.message.includes('worker')) {
+        console.log('Worker error detected, trying fallback...');
+        initLeafletFallback();
+      }
+    });
+    
+    } catch (e) {
+      console.warn('TomTom GL init failed, worker/origin issue. Will fallback later.', e);
+      window.USE_LEAFLET = true;
+      initLeafletFallback();
+    }
+    
+    function initLeafletFallback() {
+      console.log('Initializing Leaflet fallback...');
+      window.USE_LEAFLET = true;
+      
+      // Remove TomTom map container
+      const mapContainer = document.getElementById('map');
+      mapContainer.innerHTML = '';
+      
+      // Initialize Leaflet
+      const leafletMap = L.map('map').setView([-26.2041, 28.0473], 5);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(leafletMap);
+      
+      // Store reference for later use
+      window.leafletMap = leafletMap;
+      console.log('Leaflet fallback initialized');
+    }
+
+    async function loadCases() {
+        const res = await fetch(`${backendUrl}/cases`);
+        const data = await res.json();
+        const select = document.getElementById("caseSelect");
+        data.cases.forEach(c => {
+            const option = document.createElement("option");
+            option.value = c;   // now "1", "2", "3" ...
+            option.textContent = "Case " + c;
+            select.appendChild(option);
+        });
+        }
+
+    async function loadCase() {
+      const caseId = document.getElementById("caseSelect").value;
+      const res = await fetch(`${backendUrl}/cases/${caseId}`);
+      const data = await res.json();
+      
+      // clear old layers
+      const oldLayers = map.getStyle().layers;
+      oldLayers.forEach(layer => {
+        if (layer.id.startsWith("route")) {
+          if (map.getLayer(layer.id)) map.removeLayer(layer.id);
+          if (map.getSource(layer.id)) map.removeSource(layer.id);
+        }
+      });
+
+      // Assume `data.routes` contains geometry + stops
+      data.routes.forEach((route, idx) => {
+        map.addLayer({
+          id: "route" + idx,
+          type: "line",
+          source: {
+            type: "geojson",
+            data: {
+              type: "Feature",
+              geometry: {
+                type: "LineString",
+                coordinates: route.geometry
+              }
+            }
+          },
+          paint: { "line-color": ["blue", "red", "green"][idx % 3], "line-width": 4 }
+        });
+
+        route.stops.forEach((stop, sidx) => {
+          new tt.Marker()
+            .setLngLat([stop.lon, stop.lat])
+            .setPopup(new tt.Popup().setHTML(`<b>${stop.name}</b><br>Stop #${sidx+1}`))
+            .addTo(map);
+        });
+      });
+    }
+
+    // loadCases(); // Disabled: using local JSON loader below
+  </script>
+  <script>
+    // Intercept backend calls and serve from local JSON files
+    (function(){
+      const realFetch = window.fetch.bind(window);
+      const BACKEND_PREFIX = "http://127.0.0.1:8000"; // must match the app's backendUrl
+
+      function toLngLatPair(latlon) {
+        if (!Array.isArray(latlon) || latlon.length < 2) return null;
+        return [latlon[1], latlon[0]];
+      }
+
+      async function buildRoutesFromGet(caseId) {
+        const res = await realFetch(`cases/${caseId}/get.json`);
+        const data = await res.json();
+        const routes = (data?.result?.routes || []).map((route) => {
+          const steps = route.steps || [];
+          const coords = steps
+            .map((s) => s.snapped_location || s.location)
+            .filter(Boolean)
+            .map(toLngLatPair)
+            .filter(Boolean);
+          const stops = steps
+            .map((s) => {
+              const loc = s.snapped_location || s.location;
+              if (!Array.isArray(loc) || loc.length < 2) return null;
+              return { lon: loc[1], lat: loc[0], name: s.id || s.type || "stop" };
+            })
+            .filter(Boolean);
+          return { geometry: coords, stops };
+        });
+        return { routes };
+      }
+
+      window.fetch = async function(input, init) {
+        const url = typeof input === 'string' ? input : input.url;
+        try {
+          if (url && url.startsWith(`${BACKEND_PREFIX}/cases`)) {
+            const path = url.substring(BACKEND_PREFIX.length);
+            if (path === '/cases') {
+              return new Response(JSON.stringify({ cases: ['1'] }), { headers: { 'Content-Type': 'application/json' } });
+            }
+            const m = path.match(/^\/cases\/(\d+)/);
+            if (m) {
+              const caseId = m[1];
+              const data = await buildRoutesFromGet(caseId);
+              return new Response(JSON.stringify(data), { headers: { 'Content-Type': 'application/json' } });
+            }
+          }
+        } catch (e) {
+          console.warn('fetch override error:', e);
+        }
+        return realFetch(input, init);
+      };
+    })();
+
+    // After installing the override, try populating cases if empty
+    try {
+      document.addEventListener('DOMContentLoaded', () => {
+        const select = document.getElementById('caseSelect');
+        if (select && select.options.length === 0 && typeof window.loadCases === 'function') {
+          window.loadCases();
+        }
+      });
+    } catch (_) {}
+  </script>
+  <script>
+    // Override functions to use local JSON and render unassigned
+    (function(){
+      const colors = ['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b'];
+      let markers = [];
+
+      function toLngLatPair(latlon) {
+        if (!Array.isArray(latlon) || latlon.length < 2) return null;
+        return [latlon[1], latlon[0]];
+      }
+
+      function clearRoutesAndMarkers() {
+        if (window.USE_LEAFLET && window.leafletMap) {
+          // Clear Leaflet overlays
+          window._leafletOverlays.forEach(overlay => {
+            try { window.leafletMap.removeLayer(overlay); } catch(_) {}
+          });
+          window._leafletOverlays = [];
+        } else {
+          // Clear TomTom layers
+          const style = map.getStyle();
+          if (style && Array.isArray(style.layers)) {
+            style.layers.slice().forEach(l => {
+              if (/^(route|unassigned|stops?|desire)/.test(l.id)) {
+                if (map.getLayer(l.id)) map.removeLayer(l.id);
+                if (map.getSource(l.id)) map.removeSource(l.id);
+              }
+            });
+          }
+        }
+        markers.forEach(m => { try { m.remove(); } catch(_){} });
+        markers = [];
+      }
+
+      // Decode Google/OSRM-style encoded polylines (precision 5 or 6)
+      function decodePolyline(str, precision = 6) {
+        if (!str || typeof str !== 'string') return [];
+        let index = 0, lat = 0, lon = 0, coords = [];
+        const factor = Math.pow(10, precision);
+        while (index < str.length) {
+          let result = 0, shift = 0, b;
+          do { b = str.charCodeAt(index++) - 63; result |= (b & 0x1f) << shift; shift += 5; } while (b >= 0x20);
+          const dlat = (result & 1) ? ~(result >> 1) : (result >> 1);
+          lat += dlat;
+          result = 0; shift = 0;
+          do { b = str.charCodeAt(index++) - 63; result |= (b & 0x1f) << shift; shift += 5; } while (b >= 0x20);
+          const dlon = (result & 1) ? ~(result >> 1) : (result >> 1);
+          lon += dlon;
+          // polyline order is [lat, lon]; convert to [lon, lat]
+          coords.push([lon / factor, lat / factor]);
+        }
+        return coords;
+      }
+
+      // Decode NextBillion.ai style encoded polylines
+      function decodeNextBillionPolyline(str) {
+        if (!str || typeof str !== 'string') return [];
+        let index = 0, lat = 0, lon = 0, coords = [];
+        const factor = 1e6; // NextBillion uses precision 6
+        
+        while (index < str.length) {
+          let result = 0, shift = 0, b;
+          
+          // Decode latitude
+          do { 
+            b = str.charCodeAt(index++) - 63; 
+            result |= (b & 0x1f) << shift; 
+            shift += 5; 
+          } while (b >= 0x20);
+          
+          const dlat = (result & 1) ? ~(result >> 1) : (result >> 1);
+          lat += dlat;
+          
+          // Decode longitude
+          result = 0; shift = 0;
+          do { 
+            b = str.charCodeAt(index++) - 63; 
+            result |= (b & 0x1f) << shift; 
+            shift += 5; 
+          } while (b >= 0x20);
+          
+          const dlon = (result & 1) ? ~(result >> 1) : (result >> 1);
+          lon += dlon;
+          
+          // Convert to [lng, lat] format for map display
+          coords.push([lon / factor, lat / factor]);
+        }
+        return coords;
+      }
+
+      function normalizeToLngLat(pair) {
+        if (!Array.isArray(pair) || pair.length < 2) return null;
+        const a = Number(pair[0]);
+        const b = Number(pair[1]);
+        if (!isFinite(a) || !isFinite(b)) return null;
+        // If first looks like latitude (<= 90) and second like longitude (<= 180), flip
+        if (Math.abs(a) <= 90 && Math.abs(b) <= 180) return [b, a];
+        // Otherwise assume [lng, lat]
+        return [a, b];
+      }
+
+      function getRouteCoords(route) {
+        // 1) geometry as encoded string (try NextBillion format first, then Google/OSRM)
+        if (typeof route?.geometry === 'string') {
+          console.log('Decoding geometry string:', route.geometry.substring(0, 50) + '...');
+          
+          // Try NextBillion.ai format first
+          let coords = decodeNextBillionPolyline(route.geometry);
+          if (coords && coords.length > 0) {
+            console.log('Decoded NextBillion polyline with', coords.length, 'points');
+            return coords;
+          }
+          
+          // Fallback to Google/OSRM format
+          coords = decodePolyline(route.geometry, 6);
+          if (!coords || coords.length === 0) coords = decodePolyline(route.geometry, 5);
+          if (coords && coords.length > 0) {
+            console.log('Decoded Google/OSRM polyline with', coords.length, 'points');
+            return coords;
+          }
+        }
+        
+        // 2) geometry as array of coordinates
+        if (Array.isArray(route?.geometry) && route.geometry.length) {
+          return route.geometry
+            .map(normalizeToLngLat)
+            .filter(Boolean);
+        }
+        
+        // 3) fallback to steps
+        const steps = route?.steps || [];
+        const stepCoords = steps
+          .map(s => s.snapped_location || s.location)
+          .filter(Boolean)
+          .map(toLngLatPair)
+          .filter(Boolean);
+        
+        if (stepCoords.length > 0) {
+          console.log('Using step coordinates:', stepCoords.length, 'points');
+        }
+        
+        return stepCoords;
+      }
+
+      function parseLatLonString(s) {
+        if (typeof s !== 'string') return null;
+        const parts = s.split(',').map(Number);
+        if (parts.length < 2 || !isFinite(parts[0]) || !isFinite(parts[1])) return null;
+        // input is "lat,lon"
+        return [parts[1], parts[0]];
+      }
+
+      async function renderDesireLinesFromPost(caseId, bounds) {
+        try {
+          const res = await fetch(`cases/${caseId}/post.json`);
+          if (!res.ok) return false;
+          const post = await res.json();
+          const locs = (post?.request_body?.locations?.location || []).map(parseLatLonString);
+          const features = [];
+          const shipments = post?.request_body?.shipments || [];
+          shipments.forEach((shp, i) => {
+            const pIdx = shp?.pickup?.location_index;
+            const dIdx = shp?.delivery?.location_index;
+            if (typeof pIdx === 'number' && typeof dIdx === 'number') {
+              const a = locs[pIdx];
+              const b = locs[dIdx];
+              if (a && b) {
+                bounds.extend(a); bounds.extend(b);
+                features.push({ type: 'Feature', geometry: { type: 'LineString', coordinates: [a, b] }, properties: { id: `S-${i}` } });
+              }
+            }
+          });
+          if (features.length) {
+            const srcId = 'desire';
+            const layerId = 'desire';
+            map.addLayer({
+              id: layerId,
+              type: 'line',
+              source: { type: 'geojson', data: { type: 'FeatureCollection', features } },
+              paint: { 'line-color': '#555', 'line-width': 2, 'line-dasharray': [2, 2] }
+            });
+            return true;
+          }
+        } catch (e) {
+          console.warn('Desire lines fallback failed:', e);
+        }
+        return false;
+      }
+
+      function getMarkerColor(type, routeIdx) {
+        const t = (type || '').toLowerCase();
+        if (t === 'start') return '#2ecc71';      // green
+        if (t === 'end') return '#e74c3c';        // red
+        if (t === 'pickup') return '#f39c12';     // orange
+        if (t === 'delivery') return '#9b59b6';   // purple
+        if (t === 'unassigned') return '#666666'; // grey
+        // default for jobs/others: use route color if available
+        return colors[(routeIdx ?? 0) % colors.length];
+      }
+
+      window.loadCases = function() {
+        const select = document.getElementById('caseSelect');
+        if (!select) return;
+        while (select.firstChild) select.removeChild(select.firstChild);
+        ['1'].forEach(id => {
+          const opt = document.createElement('option');
+          opt.value = id; opt.textContent = 'Case ' + id;
+          select.appendChild(opt);
+        });
+        select.value = '1';
+      };
+
+      async function readSelectedFileOrNull() {
+        const fileInput = document.getElementById('getFile');
+        const file = fileInput && fileInput.files && fileInput.files[0];
+        if (!file) return null;
+        const text = await file.text();
+        try { return JSON.parse(text); } catch { return null; }
+      }
+
+      window.loadCase = async function() {
+        const select = document.getElementById('caseSelect');
+        const caseId = select ? select.value : '1';
+        try {
+          let data = await readSelectedFileOrNull();
+          if (!data) {
+            const res = await fetch(`cases/${caseId}/get.json`);
+            if (!res.ok) throw new Error(`Failed to fetch cases/${caseId}/get.json`);
+            data = await res.json();
+          }
+          const routes = data?.result?.routes || [];
+          const unassigned = data?.result?.unassigned || [];
+          clearRoutesAndMarkers();
+
+          const bounds = new tt.LngLatBounds();
+
+          routes.forEach((route, idx) => {
+            const steps = route.steps || [];
+            const coords = getRouteCoords(route);
+
+            coords.forEach(c => bounds.extend(c));
+
+            if (coords.length > 1) {
+              console.log(`Adding route ${idx} with ${coords.length} coordinates`);
+              
+              if (window.USE_LEAFLET && window.leafletMap) {
+                // Use Leaflet for rendering
+                const latLngs = coords.map(coord => [coord[1], coord[0]]); // Convert [lng, lat] to [lat, lng]
+                const polyline = L.polyline(latLngs, {
+                  color: colors[idx % colors.length],
+                  weight: 4,
+                  opacity: 0.8
+                }).addTo(window.leafletMap);
+                window._leafletOverlays.push(polyline);
+                console.log(`Route ${idx} added to Leaflet map`);
+              } else {
+                // Use TomTom for rendering
+                const lid = `route${idx}`;
+                const sourceId = `route-source-${idx}`;
+                
+                // Add source first
+                map.addSource(sourceId, {
+                  type: 'geojson',
+                  data: {
+                    type: 'Feature',
+                    geometry: {
+                      type: 'LineString',
+                      coordinates: coords
+                    }
+                  }
+                });
+                
+                // Add layer
+                map.addLayer({
+                  id: lid,
+                  type: 'line',
+                  source: sourceId,
+                  paint: { 
+                    'line-color': colors[idx % colors.length], 
+                    'line-width': 4,
+                    'line-opacity': 0.8
+                  }
+                });
+                
+                console.log(`Route ${idx} layer added to TomTom map`);
+              }
+            }
+
+            steps.forEach((s, sidx) => {
+              const lnglat = toLngLatPair(s.snapped_location || s.location);
+              if (!lnglat) return;
+              const label = s.type === 'job' ? (s.id || `Job ${sidx+1}`) : s.type;
+              
+              if (window.USE_LEAFLET && window.leafletMap) {
+                // Use Leaflet markers
+                const marker = L.marker([lnglat[1], lnglat[0]]) // Convert [lng, lat] to [lat, lng]
+                  .bindPopup(`<b>${label}</b><br>${route.vehicle || 'Route'}`)
+                  .addTo(window.leafletMap);
+                window._leafletOverlays.push(marker);
+                markers.push(marker);
+              } else {
+                // Use TomTom markers
+                const m = new tt.Marker({ color: getMarkerColor(s.type, idx) })
+                  .setLngLat(lnglat)
+                  .setPopup(new tt.Popup().setHTML(`<b>${label}</b><br>${route.vehicle || 'Route'}`))
+                  .addTo(map);
+                markers.push(m);
+              }
+            });
+          });
+
+          unassigned.forEach(u => {
+            if (!u.location) return;
+            const lnglat = toLngLatPair(u.location);
+            if (!lnglat) return;
+            bounds.extend(lnglat);
+            
+            if (window.USE_LEAFLET && window.leafletMap) {
+              // Use Leaflet markers
+              const marker = L.marker([lnglat[1], lnglat[0]]) // Convert [lng, lat] to [lat, lng]
+                .bindPopup(`<b>Unassigned</b><br>${u.id || u.type || ''}<br>${u.reason || ''}`)
+                .addTo(window.leafletMap);
+              window._leafletOverlays.push(marker);
+              markers.push(marker);
+            } else {
+              // Use TomTom markers
+              const m = new tt.Marker({ color: getMarkerColor(u.type || 'unassigned') })
+                .setLngLat(lnglat)
+                .setPopup(new tt.Popup().setHTML(`<b>Unassigned</b><br>${u.id || u.type || ''}<br>${u.reason || ''}`))
+                .addTo(map);
+              markers.push(m);
+            }
+          });
+
+          // If no geometries drawn, try fallback with desire lines from post.json
+          const drewRoutes = (map.getLayer('route0') || map.getLayer('route1') || map.getLayer('route2')) ? true : false;
+          if (!drewRoutes) {
+            await renderDesireLinesFromPost(caseId, bounds);
+          }
+
+          if (!bounds.isEmpty()) {
+            map.fitBounds(bounds, { padding: 60, linear: true });
+          }
+        } catch (err) {
+          console.error('Failed to load case:', err);
+          alert('Could not load JSON. If running from file://, choose get.json using "Load From File".');
+        }
+      };
+
+      const loadFileBtn = document.getElementById('loadFileBtn');
+      if (loadFileBtn) {
+        loadFileBtn.addEventListener('click', () => window.loadCase());
+      }
+
+      if (typeof map !== 'undefined') {
+        map.once('load', () => { window.loadCases(); });
+      } else {
+        window.addEventListener('load', () => { window.loadCases(); });
+      }
+    })();
+  </script>
+</body>
+</html>

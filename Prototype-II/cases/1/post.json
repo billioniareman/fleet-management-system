@@ -1,0 +1,252 @@
+{ 
+  "request_body":{
+    "description": "SA Truck VRP — multi-depot, multi-capacity, time windows, zones, grouping (2025-07-29 UTC)",
+    "locations": {
+      "id": 9,
+      "location": [
+        "-26.2041,28.0473",
+        "-33.9249,18.4241",
+        "-25.7479,28.2293",
+        "-26.2678,27.8585",
+        "-29.8587,31.0218",
+        "-29.6006,30.3794",
+        "-28.7282,24.7499",
+        "-33.0153,27.9116",
+        "-33.9608,25.6022",
+        "-23.9045,29.4689",
+        "-25.4658,30.9853",
+        "-28.4478,21.2561",
+        "-26.1076,28.0567",
+        "-26.0941,28.0010",
+        "-28.7807,32.0383",
+        "-29.8283,30.8911",
+        "-29.0852,26.1596",
+        "-33.9640,22.4617",
+        "-34.0363,23.0471",
+        "-25.6676,27.2423",
+        "-24.1856,29.0134",
+        "-30.0450,21.8569",
+        "-33.9344,18.8610",
+        "-33.9180,18.4233",
+        "-26.1710,28.0473",
+        "-26.2023,28.0436",
+        "-29.1211,26.2140",
+        "-33.7366,25.3914"
+      ],
+      "approaches": [
+        "unrestricted","unrestricted",
+        "curb","curb","curb","curb","curb","curb","curb","curb","curb","curb",
+        "curb","curb","curb","curb","curb","curb","curb","curb","curb","curb",
+        "curb","curb","curb","curb","curb","curb"
+      ]
+    },
+    "depots": [
+      {
+        "id": "depot-jhb",
+        "location_index": 0,
+        "description": "Johannesburg DC",
+        "time_windows": [[1753747200,1753833600]],
+        "service": 600
+      },
+      {
+        "id": "depot-ct",
+        "location_index": 1,
+        "description": "Cape Town DC",
+        "time_windows": [[1753747200,1753833600]],
+        "service": 600
+      }
+    ],
+    "vehicles": [
+      {
+        "id": "Truck-JHB-01",
+        "description": "Rigid 18t - JHB",
+        "start_depot_ids": ["depot-jhb"],
+        "end_depot_ids": ["depot-jhb"],
+        "capacity": [22, 12000],
+        "alternative_capacities": [[18, 9000]],
+        "time_window": [1753747200,1753833600],
+        "skills": [1,2],
+        "max_tasks": 20,
+        "drive_time_layover_config": {
+          "max_continuous_driving": 14400,
+          "layover_duration": 1800,
+          "include_service_time": false
+        },
+        "costs": { "fixed": 1500 },
+        "speed_factor": 0.9,
+        "allowed_zones": [201],
+        "profile": "truck_profile",
+        "volume": { "width": 2.45, "depth": 8.0, "height": 2.5 }
+      },
+      {
+        "id": "Truck-JHB-02",
+        "description": "Reefer 12t - JHB",
+        "start_depot_ids": ["depot-jhb"],
+        "end_depot_ids": ["depot-jhb"],
+        "capacity": [14, 8000],
+        "time_window": [1753747200,1753833600],
+        "skills": [2,3],
+        "max_tasks": 18,
+        "breaks": [
+          { "id": 101, "time_windows": [[1753761600,1753765200]], "description": "Lunch", "service": 1800 }
+        ],
+        "costs": { "fixed": 1200 },
+        "speed_factor": 0.95,
+        "restricted_zones": [203],
+        "profile": "truck_profile"
+      },
+      {
+        "id": "Truck-JHB-03",
+        "description": "Curtainsider 10t - JHB",
+        "start_depot_ids": ["depot-jhb"],
+        "end_depot_ids": ["depot-jhb"],
+        "capacity": [12, 6000],
+        "time_window": [1753747200,1753833600],
+        "skills": [1],
+        "max_tasks": 16,
+        "profile": "truck_profile"
+      },
+      {
+        "id": "Truck-CT-01",
+        "description": "Rigid 18t - CT",
+        "start_depot_ids": ["depot-ct"],
+        "end_depot_ids": ["depot-ct"],
+        "capacity": [22, 12000],
+        "time_window": [1753747200,1753833600],
+        "skills": [1,4],
+        "max_tasks": 20,
+        "breaks": [{ "id": 102, "time_windows": [[1753765200,1753768800]], "description": "Lunch", "service": 1800 }],
+        "costs": { "fixed": 1500 },
+        "profile": "truck_profile"
+      },
+      {
+        "id": "Truck-CT-02",
+        "description": "Box 8t - CT",
+        "start_depot_ids": ["depot-ct"],
+        "end_depot_ids": ["depot-ct"],
+        "capacity": [10, 5000],
+        "time_window": [1753747200,1753833600],
+        "skills": [4],
+        "max_tasks": 14,
+        "drive_time_layover_config": { "max_continuous_driving": 10800, "layover_duration": 1200, "include_service_time": false },
+        "profile": "truck_profile"
+      },
+      {
+        "id": "Truck-CT-03",
+        "description": "Curtainsider 10t - CT",
+        "start_depot_ids": ["depot-ct"],
+        "end_depot_ids": ["depot-ct"],
+        "capacity": [12, 6000],
+        "time_window": [1753747200,1753833600],
+        "skills": [1,4],
+        "max_tasks": 16,
+        "profile": "truck_profile"
+      },
+      {
+        "id": "Truck-NAT-01",
+        "description": "National spare (float)",
+        "start_depot_ids": ["depot-jhb"],
+        "end_depot_ids": ["depot-jhb"],
+        "capacity": [16, 9000],
+        "time_window": [1753747200,1753833600],
+        "skills": [1,2,4],
+        "max_tasks": 18,
+        "profile": "truck_profile",
+        "max_distance": 120000,
+        "max_travel_time": 28800,
+        "max_stops": 18
+      }
+    ],
+    "shipments": [
+      { "pickup": { "id": "S1-P", "location_index": 2,  "service": 600, "time_windows": [[1753749000,1753752600]], "setup": 120 }, "delivery": { "id": "S1-D", "location_index": 12, "service": 600, "time_windows": [[1753756200,1753759800]], "setup": 120 }, "amount": [6, 2400],  "skills": [1], "priority": 80, "load_types": ["chilled"],   "incompatible_load_types": ["hazmat"], "max_time_in_vehicle": 7200 },
+      { "pickup": { "id": "S2-P", "location_index": 3,  "service": 480, "time_windows": [[1753749000,1753752600]] },                                            "delivery": { "id": "S2-D", "location_index": 13, "service": 480, "time_windows": [[1753756200,1753759800]] },                                            "amount": [4, 1800],  "skills": [2], "priority": 70, "load_types": ["dry"],      "incompatible_load_types": [],        "max_time_in_vehicle": 10800 },
+      { "pickup": { "id": "S3-P", "location_index": 4,  "service": 600, "time_windows": [[1753750800,1753754400]] },                                            "delivery": { "id": "S3-D", "location_index": 14, "service": 600, "time_windows": [[1753758000,1753761600]] },                                            "amount": [8, 3500],  "skills": [1], "priority": 85, "load_types": ["dry"],      "incompatible_load_types": [],        "max_time_in_vehicle": 7200 },
+      { "pickup": { "id": "S4-P", "location_index": 5,  "service": 480, "time_windows": [[1753750800,1753754400]] },                                            "delivery": { "id": "S4-D", "location_index": 15, "service": 480, "time_windows": [[1753758000,1753761600]] },                                            "amount": [4, 1600],  "skills": [2], "priority": 60, "load_types": ["dry"],      "incompatible_load_types": [],        "max_time_in_vehicle": 7200 },
+      { "pickup": { "id": "S5-P", "location_index": 6,  "service": 600, "time_windows": [[1753750800,1753756200]] },                                            "delivery": { "id": "S5-D", "location_index": 16, "service": 600, "time_windows": [[1753761600,1753765200]] },                                            "amount": [10, 4200], "skills": [1], "priority": 75, "load_types": ["dry"],      "incompatible_load_types": ["chilled"], "max_time_in_vehicle": 14400 },
+      { "pickup": { "id": "S6-P", "location_index": 7,  "service": 600, "time_windows": [[1753752600,1753758000]] },                                            "delivery": { "id": "S6-D", "location_index": 17, "service": 600, "time_windows": [[1753763400,1753767000]] },                                            "amount": [6, 2500],  "skills": [4], "priority": 70, "load_types": ["dry"],      "incompatible_load_types": [],        "max_time_in_vehicle": 10800 },
+      { "pickup": { "id": "S7-P", "location_index": 8,  "service": 480, "time_windows": [[1753752600,1753758000]] },                                            "delivery": { "id": "S7-D", "location_index": 18, "service": 480, "time_windows": [[1753765200,1753768800]] },                                            "amount": [5, 2200],  "skills": [4], "priority": 65, "load_types": ["fragile"],  "incompatible_load_types": ["hazmat"], "max_time_in_vehicle": 7200 },
+      { "pickup": { "id": "S8-P", "location_index": 9,  "service": 480, "time_windows": [[1753752600,1753758000]] },                                            "delivery": { "id": "S8-D", "location_index": 19, "service": 480, "time_windows": [[1753765200,1753768800]] },                                            "amount": [4, 1600],  "skills": [1], "priority": 60, "load_types": ["dry"],      "incompatible_load_types": [],        "max_time_in_vehicle": 14400 },
+      { "pickup": { "id": "S9-P", "location_index": 10, "service": 600, "time_windows": [[1753754400,1753759800]] },                                            "delivery": { "id": "S9-D", "location_index": 20, "service": 600, "time_windows": [[1753767000,1753770600]] },                                            "amount": [6, 2400],  "skills": [1], "priority": 70, "load_types": ["chilled"],   "incompatible_load_types": ["hazmat"], "max_time_in_vehicle": 7200 },
+      { "pickup": { "id": "S10-P","location_index": 11, "service": 600, "time_windows": [[1753754400,1753759800]] },                                            "delivery": { "id": "S10-D","location_index": 21, "service": 600, "time_windows": [[1753768800,1753772400]] },                                            "amount": [5, 2000],  "skills": [1,2], "priority": 55, "load_types": ["hazmat"], "incompatible_load_types": ["chilled","fragile"], "max_time_in_vehicle": 14400 }
+    ],
+    "jobs": [
+      { "id": "J1", "description": "Depot CT retail drop",  "location_index": 22, "delivery": [3, 900],  "service": 600, "time_windows": [[1753752600,1753758000]], "skills": [4], "priority": 40, "volume": { "width": 1.2, "depth": 1.0, "height": 1.0, "alignment": "parallel" } },
+      { "id": "J2", "description": "CBD replenishment",      "location_index": 23, "delivery": [2, 500],  "service": 600, "time_windows": [[1753756200,1753761600]], "skills": [4], "priority": 35 },
+      { "id": "J3", "description": "Midrand delivery",       "location_index": 24, "delivery": [4, 1400], "service": 600, "time_windows": [[1753752600,1753759800]], "skills": [1], "priority": 45 },
+      { "id": "J4", "description": "Inner city drop",        "location_index": 25, "delivery": [2, 600],  "service": 480, "time_windows": [[1753756200,1753761600]], "skills": [1], "priority": 30 },
+      { "id": "J5", "description": "Bloem cluster store",    "location_index": 26, "delivery": [3, 900],  "service": 600, "time_windows": [[1753759800,1753765200]], "skills": [1], "priority": 30 },
+      { "id": "J6", "description": "Uitenhage hardware",     "location_index": 27, "delivery": [2, 700],  "service": 480, "time_windows": [[1753761600,1753767000]], "skills": [4], "priority": 25 }
+    ],
+    "options": {
+      "objective": {
+        "travel_cost": "distance",
+        "custom": { "type": "min", "value": "vehicles" }
+      },
+      "allow_early_arrival": true,
+      "solving_time_limit": 300,
+      "constraint": {
+        "max_vehicle_overtime": 900,
+        "max_visit_lateness": 300,
+        "max_activity_waiting_time": 3600
+      },
+      "routing": {
+        "disable_cache": false,
+        "cross_border": false,
+        "profiles": {
+          "truck_profile": {
+            "mode": "truck",
+            "truck_weight": 12000,
+            "truck_size": "250,250,900",
+            "hazmat_type": ["general"]
+          }
+        }
+      },
+      "grouping": {
+        "order_grouping": { "grouping_diameter": 150 },
+        "route_grouping": {
+          "zone_diameter": 1500,
+          "penalty_factor": 12.5,
+          "proximity_factor": 2
+        }
+      }
+    },
+    "zones": [
+      {
+        "id": 201,
+        "description": "Gauteng operating zone",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[
+            [27.5,-26.6],[29.1,-26.6],[29.1,-25.6],[27.5,-25.6],[27.5,-26.6]
+          ]]
+        }
+      },
+      {
+        "id": 202,
+        "description": "Western Cape operating zone",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[
+            [18.2,-34.2],[19.3,-34.2],[19.3,-33.4],[18.2,-33.4],[18.2,-34.2]
+          ]]
+        }
+      },
+      {
+        "id": 203,
+        "description": "Restricted conservation area",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[
+            [21.1,-30.4],[21.4,-30.4],[21.4,-30.1],[21.1,-30.1],[21.1,-30.4]
+          ]]
+        }
+      }
+    ]
+},
+
+  "response_body" : {
+      "id": "4c15046486662f0c4c8a368c366ef25c",
+      "message": "Optimization job created",
+      "status": "Ok"
+    }
+}

@@ -1,0 +1,79 @@
+curl --location 'https://api.nextbillion.io/optimization/v2?key=bf321858e11c473a853fe11ecdd34a16' \
+--header 'Content-Type: application/json' \
+--data '{
+  "description": "S3 — 1 vehicle, 1 shipment (pickup→delivery), capacity [6]",
+  "locations": {
+    "id": 3,
+    "location": [
+      "-26.2041,28.0473",  
+      "-26.2100,28.0300",  
+      "-26.1500,28.0700"   
+    ],
+    "approaches": ["unrestricted","curb","curb"]
+  },
+  "vehicles": [
+    {
+      "id": "van-1",
+      "start_index": 0,
+      "end_index": 0,
+      "capacity": [6]
+    }
+  ],
+  "shipments": [
+    {
+      "pickup":   { "id": "S1-P", "location_index": 1, "service": 300 },
+      "delivery": { "id": "S1-D", "location_index": 2, "service": 300 },
+      "amount": [4]
+    }
+  ],
+  "options": { "objective": { "travel_cost": "distance" } }
+}
+'
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+  "description": "S3 — 1 vehicle, 1 shipment (pickup→delivery), capacity [6]",
+  "locations": {
+    "id": 3,
+    "location": [
+      "-26.2041,28.0473",  // 0 depot
+      "-26.2100,28.0300",  // 1 pickup
+      "-26.1500,28.0700"   // 2 delivery
+    ],
+    "approaches": ["unrestricted","curb","curb"]
+  },
+  "vehicles": [
+    {
+      "id": "van-1",
+      "start_index": 0,
+      "end_index": 0,
+      "capacity": [6]
+    }
+  ],
+  "shipments": [
+    {
+      "pickup":   { "id": "S1-P", "location_index": 1, "service": 300 },
+      "delivery": { "id": "S1-D", "location_index": 2, "service": 300 },
+      "amount": [4]
+    }
+  ],
+  "options": { "objective": { "travel_cost": "distance" } }
+}
+
+Respone : 
+{
+    "id": "f2e6f77ea3e6a125b607160712def117",
+    "message": "Optimization job created",
+    "status": "Ok"
+}

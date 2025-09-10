@@ -1,0 +1,149 @@
+curl --location 'https://api.nextbillion.io/optimization/v2?key=bf321858e11c473a853fe11ecdd34a16' \
+--header 'Content-Type: application/json' \
+--data '{
+  "description": "R7 — 3 depots, 6 drops, 2D capacities with alternative_capacities and per-depot vehicle windows",
+  "locations": {
+    "id": 107,
+    "location": [
+      "-26.2041,28.0473",
+      "-33.9249,18.4241",
+      "-29.1211,26.2140",
+      "-26.1710,28.0473",
+      "-26.2023,28.0436",
+      "-25.7479,28.2293",
+      "-33.9344,18.8610",
+      "-33.9180,18.4233",
+      "-29.0852,26.1596"
+    ],
+    "approaches": ["unrestricted","unrestricted","unrestricted","curb","curb","curb","curb","curb","curb"]
+  },
+  "depots": [
+    { "id": "depot-jhb", "location_index": 0, "description": "Johannesburg DC" },
+    { "id": "depot-ct",  "location_index": 1, "description": "Cape Town DC" },
+    { "id": "depot-bfn", "location_index": 2, "description": "Bloemfontein DC" }
+  ],
+  "vehicles": [
+    {
+      "id": "rigid-jhb-1",
+      "start_depot_ids": ["depot-jhb"],
+      "end_depot_ids": ["depot-jhb"],
+      "capacity": [20, 8000],
+      "alternative_capacities": [[16, 6000]],
+      "time_window": [1753747200, 1753820000],
+      "max_tasks": 5
+    },
+    {
+      "id": "rigid-ct-1",
+      "start_depot_ids": ["depot-ct"],
+      "end_depot_ids": ["depot-ct"],
+      "capacity": [20, 8000],
+      "alternative_capacities": [[16, 6000]],
+      "time_window": [1753750800, 1753833600],
+      "max_tasks": 5
+    },
+    {
+      "id": "rigid-bfn-1",
+      "start_depot_ids": ["depot-bfn"],
+      "end_depot_ids": ["depot-bfn"],
+      "capacity": [16, 6000],
+      "alternative_capacities": [[12, 4800]],
+      "time_window": [1753749000, 1753827000],
+      "max_tasks": 5
+    }
+  ],
+  "jobs": [
+    { "id": "J1", "location_index": 3, "delivery": [4, 1200], "service": 300, "priority": 50 },
+    { "id": "J2", "location_index": 4, "delivery": [3, 900],  "service": 300, "priority": 50 },
+    { "id": "J3", "location_index": 5, "delivery": [5, 1500], "service": 300, "priority": 40 },
+    { "id": "J4", "location_index": 6, "delivery": [3, 800],  "service": 300, "priority": 40 },
+    { "id": "J5", "location_index": 7, "delivery": [3, 900],  "service": 300, "priority": 40 },
+    { "id": "J6", "location_index": 8, "delivery": [4, 1200], "service": 300, "priority": 45 }
+  ],
+  "options": {
+    "objective": {
+      "travel_cost": "distance",
+      "custom": { "type": "min", "value": "vehicles" }
+    },
+    "allow_early_arrival": true
+  }
+}
+'
+
+
+Request : R7 — 3 depots, per-depot windows, 2D capacities + alternatives
+
+{
+  "description": "R7 — 3 depots, 6 drops, 2D capacities with alternative_capacities and per-depot vehicle windows",
+  "locations": {
+    "id": 107,
+    "location": [
+      "-26.2041,28.0473",
+      "-33.9249,18.4241",
+      "-29.1211,26.2140",
+      "-26.1710,28.0473",
+      "-26.2023,28.0436",
+      "-25.7479,28.2293",
+      "-33.9344,18.8610",
+      "-33.9180,18.4233",
+      "-29.0852,26.1596"
+    ],
+    "approaches": ["unrestricted","unrestricted","unrestricted","curb","curb","curb","curb","curb","curb"]
+  },
+  "depots": [
+    { "id": "depot-jhb", "location_index": 0, "description": "Johannesburg DC" },
+    { "id": "depot-ct",  "location_index": 1, "description": "Cape Town DC" },
+    { "id": "depot-bfn", "location_index": 2, "description": "Bloemfontein DC" }
+  ],
+  "vehicles": [
+    {
+      "id": "rigid-jhb-1",
+      "start_depot_ids": ["depot-jhb"],
+      "end_depot_ids": ["depot-jhb"],
+      "capacity": [20, 8000],
+      "alternative_capacities": [[16, 6000]],
+      "time_window": [1753747200, 1753820000],
+      "max_tasks": 5
+    },
+    {
+      "id": "rigid-ct-1",
+      "start_depot_ids": ["depot-ct"],
+      "end_depot_ids": ["depot-ct"],
+      "capacity": [20, 8000],
+      "alternative_capacities": [[16, 6000]],
+      "time_window": [1753750800, 1753833600],
+      "max_tasks": 5
+    },
+    {
+      "id": "rigid-bfn-1",
+      "start_depot_ids": ["depot-bfn"],
+      "end_depot_ids": ["depot-bfn"],
+      "capacity": [16, 6000],
+      "alternative_capacities": [[12, 4800]],
+      "time_window": [1753749000, 1753827000],
+      "max_tasks": 5
+    }
+  ],
+  "jobs": [
+    { "id": "J1", "location_index": 3, "delivery": [4, 1200], "service": 300, "priority": 50 },
+    { "id": "J2", "location_index": 4, "delivery": [3, 900],  "service": 300, "priority": 50 },
+    { "id": "J3", "location_index": 5, "delivery": [5, 1500], "service": 300, "priority": 40 },
+    { "id": "J4", "location_index": 6, "delivery": [3, 800],  "service": 300, "priority": 40 },
+    { "id": "J5", "location_index": 7, "delivery": [3, 900],  "service": 300, "priority": 40 },
+    { "id": "J6", "location_index": 8, "delivery": [4, 1200], "service": 300, "priority": 45 }
+  ],
+  "options": {
+    "objective": {
+      "travel_cost": "distance",
+      "custom": { "type": "min", "value": "vehicles" }
+    },
+    "allow_early_arrival": true
+  }
+}
+
+
+Response : 
+{
+    "id": "1fcbcf0a7ebe94958ebe444bd4fdbe67",
+    "message": "Optimization job created",
+    "status": "Ok"
+}

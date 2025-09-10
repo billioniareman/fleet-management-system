@@ -1,0 +1,2 @@
+curl --location 'https://api.nextbillion.io/optimization/v2/result?id=d7c96fc2498f14395f7d49f214098411&key=bf321858e11c473a853fe11ecdd34a16' \
+--header 'Content-Type: application/json'

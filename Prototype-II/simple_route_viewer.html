@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Route Viewer</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        #map { height: 100vh; width: 100%; }
+        .controls { position: absolute; top: 10px; left: 10px; z-index: 1000; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .legend { margin-top: 10px; }
+        .legend-item { display: inline-block; margin-right: 15px; font-size: 12px; }
+        .legend-color { width: 12px; height: 12px; display: inline-block; margin-right: 5px; border-radius: 2px; }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <h3>Route Viewer</h3>
+        <button onclick="loadRoutes()" style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Load Routes</button>
+        <div class="legend">
+            <div class="legend-item"><span class="legend-color" style="background: #1f77b4;"></span>Route 1</div>
+            <div class="legend-item"><span class="legend-color" style="background: #ff7f0e;"></span>Route 2</div>
+            <div class="legend-item"><span class="legend-color" style="background: #2ca02c;"></span>Route 3</div>
+            <div class="legend-item"><span class="legend-color" style="background: #d62728;"></span>Route 4</div>
+        </div>
+    </div>
+    <div id="map"></div>
+
+    <script>
+        // Initialize map centered on South Africa
+        const map = L.map('map').setView([-26.2041, 28.0473], 6);
+        
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Route colors
+        const colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728'];
+        let routeLayers = [];
+        let markerLayers = [];
+
+        // Decode NextBillion.ai polyline
+        function decodePolyline(str) {
+            if (!str || typeof str !== 'string') return [];
+            let index = 0, lat = 0, lon = 0, coords = [];
+            const factor = 1e6;
+            
+            while (index < str.length) {
+                let result = 0, shift = 0, b;
+                
+                // Decode latitude
+                do { 
+                    b = str.charCodeAt(index++) - 63; 
+                    result |= (b & 0x1f) << shift; 
+                    shift += 5; 
+                } while (b >= 0x20);
+                
+                const dlat = (result & 1) ? ~(result >> 1) : (result >> 1);
+                lat += dlat;
+                
+                // Decode longitude
+                result = 0; shift = 0;
+                do { 
+                    b = str.charCodeAt(index++) - 63; 
+                    result |= (b & 0x1f) << shift; 
+                    shift += 5; 
+                } while (b >= 0x20);
+                
+                const dlon = (result & 1) ? ~(result >> 1) : (result >> 1);
+                lon += dlon;
+                
+                coords.push([lat / factor, lon / factor]);
+            }
+            return coords;
+        }
+
+        function clearMap() {
+            // Clear existing routes and markers
+            routeLayers.forEach(layer => map.removeLayer(layer));
+            markerLayers.forEach(layer => map.removeLayer(layer));
+            routeLayers = [];
+            markerLayers = [];
+        }
+
+        async function loadRoutes() {
+            try {
+                clearMap();
+                console.log('Loading routes...');
+                
+                // Load the JSON data
+                const response = await fetch('cases/1/get.json');
+                const data = await response.json();
+                
+                console.log('Data loaded:', data);
+                
+                const routes = data.result.routes || [];
+                const unassigned = data.result.unassigned || [];
+                
+                console.log(`Found ${routes.length} routes and ${unassigned.length} unassigned jobs`);
+                
+                let allBounds = [];
+                
+                // Process each route
+                routes.forEach((route, idx) => {
+                    console.log(`Processing route ${idx}:`, route.vehicle);
+                    
+                    // Decode geometry
+                    let coords = [];
+                    if (route.geometry && typeof route.geometry === 'string') {
+                        coords = decodePolyline(route.geometry);
+                        console.log(`Decoded ${coords.length} points for route ${idx}`);
+                    }
+                    
+                    // If no geometry, use steps
+                    if (coords.length === 0 && route.steps) {
+                        coords = route.steps
+                            .map(step => {
+                                const loc = step.snapped_location || step.location;
+                                return loc ? [loc[0], loc[1]] : null;
+                            })
+                            .filter(Boolean);
+                        console.log(`Using ${coords.length} step coordinates for route ${idx}`);
+                    }
+                    
+                    // Draw route line
+                    if (coords.length > 1) {
+                        const polyline = L.polyline(coords, {
+                            color: colors[idx % colors.length],
+                            weight: 4,
+                            opacity: 0.8
+                        }).addTo(map);
+                        routeLayers.push(polyline);
+                        
+                        // Add to bounds
+                        coords.forEach(coord => allBounds.push(coord));
+                        
+                        console.log(`Route ${idx} drawn with ${coords.length} points`);
+                    }
+                    
+                    // Add markers for steps
+                    if (route.steps) {
+                        route.steps.forEach((step, stepIdx) => {
+                            const loc = step.snapped_location || step.location;
+                            if (loc) {
+                                const marker = L.marker([loc[0], loc[1]])
+                                    .bindPopup(`
+                                        <b>${step.type || 'Stop'}</b><br>
+                                        ${step.id || ''}<br>
+                                        ${route.vehicle || 'Vehicle'}<br>
+                                        Step ${stepIdx + 1}
+                                    `)
+                                    .addTo(map);
+                                markerLayers.push(marker);
+                                allBounds.push([loc[0], loc[1]]);
+                            }
+                        });
+                    }
+                });
+                
+                // Add unassigned markers
+                unassigned.forEach((job, idx) => {
+                    if (job.location) {
+                        const marker = L.marker([job.location[0], job.location[1]])
+                            .bindPopup(`
+                                <b>Unassigned</b><br>
+                                ${job.id || ''}<br>
+                                ${job.type || ''}<br>
+                                ${job.reason || ''}
+                            `)
+                            .addTo(map);
+                        markerLayers.push(marker);
+                        allBounds.push([job.location[0], job.location[1]]);
+                    }
+                });
+                
+                // Fit map to show all routes
+                if (allBounds.length > 0) {
+                    const group = new L.featureGroup(routeLayers.concat(markerLayers));
+                    map.fitBounds(group.getBounds().pad(0.1));
+                }
+                
+                console.log(`Map updated with ${routeLayers.length} routes and ${markerLayers.length} markers`);
+                
+            } catch (error) {
+                console.error('Error loading routes:', error);
+                alert('Error loading routes. Check console for details.');
+            }
+        }
+
+        // Auto-load routes when page loads
+        window.addEventListener('load', () => {
+            console.log('Page loaded, auto-loading routes...');
+            loadRoutes();
+        });
+    </script>
+</body>
+</html>
