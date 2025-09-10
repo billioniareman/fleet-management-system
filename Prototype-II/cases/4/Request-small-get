@@ -1,0 +1,142 @@
+curl --location 'https://api.nextbillion.io/optimization/v2/result?id=f2e6f77ea3e6a125b607160712def117&key=bf321858e11c473a853fe11ecdd34a16' \
+--header 'Content-Type: application/json'
+
+
+
+{
+    "description": "S3 — 1 vehicle, 1 shipment (pickup→delivery), capacity [6]",
+    "result": {
+        "code": 0,
+        "summary": {
+            "cost": 28587,
+            "routes": 1,
+            "unassigned": 0,
+            "setup": 0,
+            "service": 600,
+            "duration": 2688,
+            "waiting_time": 0,
+            "priority": 0,
+            "delivery": [
+                4
+            ],
+            "pickup": [
+                4
+            ],
+            "distance": 28587
+        },
+        "routes": [
+            {
+                "vehicle": "van-1",
+                "cost": 28587,
+                "steps": [
+                    {
+                        "type": "start",
+                        "arrival": 0,
+                        "duration": 0,
+                        "service": 0,
+                        "waiting_time": 0,
+                        "location": [
+                            -26.2041,
+                            28.0473
+                        ],
+                        "location_index": 0,
+                        "load": [
+                            0
+                        ],
+                        "distance": 0,
+                        "snapped_location": [
+                            -26.2041,
+                            28.04734
+                        ]
+                    },
+                    {
+                        "type": "pickup",
+                        "arrival": 830,
+                        "duration": 830,
+                        "service": 300,
+                        "waiting_time": 0,
+                        "location": [
+                            -26.21,
+                            28.03
+                        ],
+                        "location_index": 1,
+                        "id": "S1-P",
+                        "load": [
+                            4
+                        ],
+                        "distance": 6340,
+                        "internal_id": 3046550612,
+                        "snapped_location": [
+                            -26.21004,
+                            28.03069
+                        ]
+                    },
+                    {
+                        "type": "delivery",
+                        "arrival": 2042,
+                        "duration": 1742,
+                        "service": 300,
+                        "waiting_time": 0,
+                        "location": [
+                            -26.15,
+                            28.07
+                        ],
+                        "location_index": 2,
+                        "id": "S1-D",
+                        "load": [
+                            0
+                        ],
+                        "distance": 15788,
+                        "internal_id": 2710998232,
+                        "snapped_location": [
+                            -26.15033,
+                            28.0701
+                        ]
+                    },
+                    {
+                        "type": "end",
+                        "arrival": 3288,
+                        "duration": 2688,
+                        "service": 0,
+                        "waiting_time": 0,
+                        "location": [
+                            -26.2041,
+                            28.0473
+                        ],
+                        "location_index": 0,
+                        "load": [
+                            0
+                        ],
+                        "distance": 28587,
+                        "snapped_location": [
+                            -26.2041,
+                            28.04734
+                        ]
+                    }
+                ],
+                "service": 600,
+                "duration": 2688,
+                "waiting_time": 0,
+                "priority": 0,
+                "delivery": [
+                    4
+                ],
+                "pickup": [
+                    4
+                ],
+                "distance": 28587,
+                "geometry": "r~|~C{~djDH?d@Ef@CJA`@CFAHAJ?bBMbAIpAIvAKx@Gj@Ez@Gv@GpBO^Cx@GtAKd@Eb@CF?N?T@hAJl@DdAJh@Db@A\\CJlBLhBFxAd@vJ@PB@XN\\PVNPJRL\\PXLPDRBR@F?V?N?N?D?J@FA?ZAJAHAREXGNEFMVO^GZSxAMfACJ?BCPE`@ETE^ETU|AYjBERIp@EV?BAJE^IXAVE~ACn@At@?J?N@h@?F?hC@xC@bA?|@?vA@nA?P@`B?x@@dB@nB?j@@hA?R?F?D?FDzIBrB?N?T?L@n@Bd@@b@FnAF|@LnA?D?FPtBNtBPvBd@bGBT?FN|APnBBN^~ETfCTnCRjCDh@`@zELxAR`CJbAHfADl@VxCF`AH`ADd@BZ@F@D@JDVDVZd@NTHPJVBBFPTp@VfAUF[FM@O?SEIEOIKMGMGQEWGo@MeBI_AAUEe@AMGy@CUEg@IaAACk@oFIq@E[OuACU]cDAEIu@CSMy@WsA[{AKi@]yBU{AS_BMcAIeAKgAC]G_AQaCCaACq@Ae@EuAAUGaBG_BI}AEs@AGEw@E{@?EI}@CWIk@Ki@Mg@Se@Ye@[c@[_@_@Y]S]OWIGCa@Ie@EI?UAm@?S@k@@U?O@a@@c@?eFBeA@mFHI@Y?C?wEH}CFO@I@e@Bk@BoBJA?s@DiBNw@DcAH_@Dw@D{BRgAHK@MBKBG@q@NKBC@qBd@aCj@_@H[Hg@JkAXA?aAVg@J_@HoBf@o@Ng@L{Bh@s@PSD]JcATeCl@g@LWDE?]DC?G@C@S?e@@S?S?g@Cw@EMASA[Cy@Gc@Ea@Ea@E[AA?e@Ae@?c@@a@BeBLQ@iCTcAJwAFmAJ}@Fk@@m@Ac@Ce@Ei@MWIGC_@M?A]Oc@YWSCCOMEEGECGIICAGIEGOSGIACIQCECGSg@YgAOq@COGm@MgAEe@Ky@OcAOk@Oi@Ug@Sa@CGKQGIAAEIGGGKIGOQ_@]m@i@YU{BiB}GmFiA}@mB{A_E}CKGo@e@c@[IGGCQM_Am@{@i@a@Uq@c@]UeAs@a@Wc@[c@[_@Yc@]a@[a@]c@_@]Ym@i@MKSOUUKKuEqEy@u@yAyAg@e@cBaBo@o@gEaE[]OOUSeBmBe@m@[c@Wa@Ym@[u@Uo@Og@Qq@QaAIo@Is@C{@Cu@?o@?q@Bm@FmA@W@MJmBBk@?GH}AFqAB}@BgA?Q?U?[G}AKcAEa@G]Mo@Ki@K_@Sk@IUMWYk@We@GKKOY_@_@c@IKSSAA}@u@WSiAo@_Aa@e@S]KQEo@Q}@YEAa@KMC_AWw@U[Iy@U{@UaCo@KCUGiD}@MEQEUGiBc@OE]Kc@GKCcAOQCw@KgAKuAGC?mAA}A@g@P_DTuId@o@DC?m@@?k@?O@I?S?o@@s@@qB_B?gAAS?a@?g@Aa@?]?kCA{@Ag@?{ECDuKBkGBmF@gDCOGUGGAEg@kCYeBIg@UcBk@oDESqAoI_AaGQmAACqLbC{A\\?DpAjIf@bDj@jDhAlHHb@DT|@xFF`@BPBN@@@tACbBAdBCdJAxD?TgA?IFU@mADS@y@?BRDf@L\\P\\TRXJzA\\nBXdHb@F@lA@v@?bC@nJMfHIb@AlAAdHO`BC|ACfAAnBA`ABP@d@@jBLdBTdB\\jCn@zCx@dAXbAXpElAVFxBh@LBVFjDfAfCfAl@^h@`@r@l@XVXZFHVZZd@`@t@R`@Pb@^bADPJ\\Lf@H\\BTPtBB^Br@?P?t@AZE|AIdBG~AAFA`@KnBALAT?BCl@Cn@Cr@?x@@v@Bp@Dn@Hn@Jp@Pv@Rv@Pj@Rf@Vf@Xh@Xf@Z`@VZBB\\`@j@l@n@n@LLv@v@tDpDnBlBXVlAnANNf@d@zBvBpBnB`@^^\\ZXNLPLb@`@fA|@r@j@t@j@r@f@v@h@t@f@r@d@HDJFt@b@bC|AFDHDb@\\`Ap@~BhB^VjBzAn@f@`At@nFbEp@j@f@^\\X^XLHVR`@Z^\\ZZV\\FJBDBDFJDF\\t@Vr@h@dBLt@@FBVDVLvANrAF`@Jd@@JDLHTN\\@BDFBDRZBDDFFH@@HJDDFHBDDBTTZVf@XRJDBZJVFD@B@XFj@FRBb@@d@A\\AjAIx@GtAKbAIZCjAIZCnAKz@G`@Ah@?d@@b@@`@Bj@Dl@Dn@Db@DV@x@Fl@Bh@?TAB?JAN?NANApAWXErBc@ZIf@MTG~DcARENEp@OtBg@ZIj@Of@MVEZIv@Q`@KZI\\IzBi@BAdBa@REHCXGB?VGDALCLCnAOZC`BMHAl@E~BOZAdBMz@EZAl@EbAG|@E\\?hBEh@AdAA\\AX?XAz@AR?PAVAb@?lAChACZAXAj@?fAAjA?^?r@Ab@?TEFCB?NCL?b@AlAC`@Ef@Kf@Qf@Sd@YVSZY^e@Zc@Ta@N[Rg@BIHS@C?CH[BIHg@BUDWDo@Dy@?{@@G?KAm@CaB?OAMAaF?g@AS?qB?kA?eBCECCAC?AAC?SCc@?W?{@?i@?w@BqA?KBcABy@DkBD_C?QESESCCACEIGCEIGEMGMEKAmBAoA?W?qC@KAIEGIEIAI?K?K?m@AKEIGEGEIAWAu@FmCPU_ESeDIwAGiAO_DCYOaCGe@Gi@MyBw@F{@Fk@Dy@FwAJqAHcAHcBLK?I@G@a@BK@g@Be@DI?",
+                "internal_id": 3977904708,
+                "profile": "default",
+                "adopted_capacity": [
+                    6
+                ]
+            }
+        ],
+        "routing_profiles": {
+            "default": {}
+        }
+    },
+    "status": "Ok",
+    "message": ""
+}

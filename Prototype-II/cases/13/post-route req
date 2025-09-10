@@ -1,0 +1,150 @@
+curl --location 'https://api.nextbillion.io/optimization/v2?key=bf321858e11c473a853fe11ecdd34a16' \
+--header 'Content-Type: application/json' \
+--data '{
+  "description": "R8 — 2 depots, 7 drops, alternate vehicle profiles (truck_profile vs van_profile)",
+  "locations": {
+    "id": 108,
+    "location": [
+      "-26.2041,28.0473",
+      "-33.9249,18.4241",
+      "-25.7479,28.2293",
+      "-26.2678,27.8585",
+      "-29.8587,31.0218",
+      "-29.6006,30.3794",
+      "-28.7282,24.7499",
+      "-33.0153,27.9116",
+      "-33.9608,25.6022"
+    ],
+    "approaches": ["unrestricted","unrestricted","curb","curb","curb","curb","curb","curb","curb"]
+  },
+  "depots": [
+    { "id": "depot-jhb", "location_index": 0, "description": "Johannesburg DC" },
+    { "id": "depot-ct",  "location_index": 1, "description": "Cape Town DC" }
+  ],
+  "vehicles": [
+    {
+      "id": "truck-jhb-1",
+      "start_depot_ids": ["depot-jhb"],
+      "end_depot_ids": ["depot-jhb"],
+      "capacity": [12],
+      "time_window": [1753747200, 1753833600],
+      "profile": "truck_profile",
+      "speed_factor": 0.9
+    },
+    {
+      "id": "van-ct-1",
+      "start_depot_ids": ["depot-ct"],
+      "end_depot_ids": ["depot-ct"],
+      "capacity": [8],
+      "time_window": [1753747200, 1753833600],
+      "profile": "van_profile",
+      "speed_factor": 1.05
+    }
+  ],
+  "jobs": [
+    { "id": "J1", "location_index": 2, "delivery": [2], "service": 240 },
+    { "id": "J2", "location_index": 3, "delivery": [1], "service": 240 },
+    { "id": "J3", "location_index": 4, "delivery": [2], "service": 240 },
+    { "id": "J4", "location_index": 5, "delivery": [2], "service": 240 },
+    { "id": "J5", "location_index": 6, "delivery": [1], "service": 240 },
+    { "id": "J6", "location_index": 7, "delivery": [2], "service": 240 },
+    { "id": "J7", "location_index": 8, "delivery": [2], "service": 240 }
+  ],
+  "options": {
+    "objective": { "travel_cost": "distance" },
+    "routing": {
+      "profiles": {
+        "truck_profile": {
+          "mode": "truck",
+          "truck_weight": 12000,
+          "truck_size": "250,250,900",
+          "hazmat_type": ["general"]
+        },
+        "van_profile": {
+          "mode": "car"
+        }
+      }
+    }
+  }
+}
+'
+
+Reququest : R8 — alternate profiles per vehicle (truck vs. van), 2 depots, 7 drops
+
+{
+  "description": "R8 — 2 depots, 7 drops, alternate vehicle profiles (truck_profile vs van_profile)",
+  "locations": {
+    "id": 108,
+    "location": [
+      "-26.2041,28.0473",
+      "-33.9249,18.4241",
+      "-25.7479,28.2293",
+      "-26.2678,27.8585",
+      "-29.8587,31.0218",
+      "-29.6006,30.3794",
+      "-28.7282,24.7499",
+      "-33.0153,27.9116",
+      "-33.9608,25.6022"
+    ],
+    "approaches": ["unrestricted","unrestricted","curb","curb","curb","curb","curb","curb","curb"]
+  },
+  "depots": [
+    { "id": "depot-jhb", "location_index": 0, "description": "Johannesburg DC" },
+    { "id": "depot-ct",  "location_index": 1, "description": "Cape Town DC" }
+  ],
+  "vehicles": [
+    {
+      "id": "truck-jhb-1",
+      "start_depot_ids": ["depot-jhb"],
+      "end_depot_ids": ["depot-jhb"],
+      "capacity": [12],
+      "time_window": [1753747200, 1753833600],
+      "profile": "truck_profile",
+      "speed_factor": 0.9
+    },
+    {
+      "id": "van-ct-1",
+      "start_depot_ids": ["depot-ct"],
+      "end_depot_ids": ["depot-ct"],
+      "capacity": [8],
+      "time_window": [1753747200, 1753833600],
+      "profile": "van_profile",
+      "speed_factor": 1.05
+    }
+  ],
+  "jobs": [
+    { "id": "J1", "location_index": 2, "delivery": [2], "service": 240 },
+    { "id": "J2", "location_index": 3, "delivery": [1], "service": 240 },
+    { "id": "J3", "location_index": 4, "delivery": [2], "service": 240 },
+    { "id": "J4", "location_index": 5, "delivery": [2], "service": 240 },
+    { "id": "J5", "location_index": 6, "delivery": [1], "service": 240 },
+    { "id": "J6", "location_index": 7, "delivery": [2], "service": 240 },
+    { "id": "J7", "location_index": 8, "delivery": [2], "service": 240 }
+  ],
+  "options": {
+    "objective": { "travel_cost": "distance" },
+    "routing": {
+      "profiles": {
+        "truck_profile": {
+          "mode": "truck",
+          "truck_weight": 12000,
+          "truck_size": "250,250,900",
+          "hazmat_type": ["general"]
+        },
+        "van_profile": {
+          "mode": "car"
+        }
+      }
+    }
+  }
+}
+
+
+Response : 
+
+{
+    "id": "b945334c46b41ed379f5d28ceb696291",
+    "message": "Optimization job created",
+    "status": "Ok"
+}
+

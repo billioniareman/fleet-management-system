@@ -1,0 +1,477 @@
+curl --location 'https://api.nextbillion.io/optimization/v2?key=bf321858e11c473a853fe11ecdd34a16' \
+--header 'Content-Type: application/json' \
+--data '{
+  "description": "SA Truck VRP — multi-depot, multi-capacity, time windows, zones, grouping (fixed)",
+  "locations": {
+    "id": 101,
+    "location": [
+      "6.5244,3.3792",       
+      "5.6037,-0.1870",     
+      "7.3775,3.9470",      
+      "7.1600,3.3500",      
+      "6.3350,5.6030",      
+      "4.8156,7.0498",      
+      "6.1498,6.7857",      
+      "6.5244,7.5174",      
+      "5.6800,0.0100",      
+      "6.6885,-1.6244",     
+      "4.9040,-1.7562",     
+      "5.1053,-1.2466",     
+      "6.4502,3.3903",      
+      "6.5960,3.3370",      
+      "6.8689,3.7233",      
+      "6.4531,7.5025",      
+      "5.6145,-0.2057",     
+      "5.5600,-0.2050",     
+      "5.5536,-0.1969",     
+      "6.0200,-1.5200",     
+      "5.2800,-2.5800",     
+      "4.8242,6.9870",      
+      "6.2100,7.0700",      
+      "6.2600,5.3800",      
+      "6.4500,3.6000",      
+      "6.4600,2.7300",      
+      "5.7000,-0.3600",     
+      "6.7000,-1.5700"      
+    ],
+    "approaches": [
+      "unrestricted","unrestricted",
+      "curb","curb","curb","curb","curb","curb","curb","curb","curb","curb",
+      "curb","curb","curb","curb","curb","curb","curb","curb","curb","curb",
+      "curb","curb","curb","curb","curb","curb"
+    ]
+  },
+
+  "depots": [
+    {
+      "id": "depot-lagos",
+      "location_index": 0,
+      "description": "Lagos DC",
+      "time_windows": [[1757311200,1757376000]],
+      "service": 600
+    },
+    {
+      "id": "depot-accra",
+      "location_index": 1,
+      "description": "Accra DC",
+      "time_windows": [[1757311200,1757376000]],
+      "service": 600
+    }
+  ],
+
+  "vehicles": [
+    {
+      "id": "NG-LAG-18T-01",
+      "description": "Rigid 18t - Lagos",
+      "start_depot_ids": ["depot-lagos"],
+      "end_depot_ids": ["depot-lagos"],
+      "capacity": [22, 12000],
+      "alternative_capacities": [[18, 9000]],
+      "time_window": [1757311200,1757376000],
+      "skills": [1,2],
+      "max_tasks": 22,
+      "drive_time_layover_config": { "max_continuous_driving": 14400, "layover_duration": 1800, "include_service_time": false },
+      "costs": { "fixed": 1500 },
+      "speed_factor": 0.92,
+      "profile": "truck_profile"
+    },
+    {
+      "id": "NG-LAG-REEF-12T",
+      "description": "Reefer 12t - Lagos",
+      "start_depot_ids": ["depot-lagos"],
+      "end_depot_ids": ["depot-lagos"],
+      "capacity": [14, 8000],
+      "time_window": [1757311200,1757376000],
+      "skills": [2,3],
+      "max_tasks": 18,
+      "breaks": [{ "id": 201, "time_windows": [[1757332800,1757336400]], "description": "Lunch", "service": 1800 }],
+      "costs": { "fixed": 1200 },
+      "speed_factor": 0.95,
+      "profile": "truck_profile"
+    },
+    {
+      "id": "GH-ACC-18T-01",
+      "description": "Rigid 18t - Accra",
+      "start_depot_ids": ["depot-accra"],
+      "end_depot_ids": ["depot-accra"],
+      "capacity": [22, 12000],
+      "time_window": [1757311200,1757376000],
+      "skills": [1,4],
+      "max_tasks": 20,
+      "breaks": [{ "id": 202, "time_windows": [[1757336400,1757340000]], "description": "Lunch", "service": 1800 }],
+      "costs": { "fixed": 1500 },
+      "profile": "truck_profile"
+    },
+    {
+      "id": "GH-ACC-BOX-8T-S2",
+      "description": "Box 8t - Accra (skill 2)",
+      "start_depot_ids": ["depot-accra"],
+      "end_depot_ids": ["depot-accra"],
+      "capacity": [10, 5000],
+      "time_window": [1757311200,1757376000],
+      "skills": [2,4],
+      "max_tasks": 16,
+      "drive_time_layover_config": { "max_continuous_driving": 10800, "layover_duration": 1200, "include_service_time": false },
+      "profile": "truck_profile"
+    },
+    {
+      "id": "NAT-FLOAT-10T",
+      "description": "National spare",
+      "start_depot_ids": ["depot-lagos"],
+      "end_depot_ids": ["depot-lagos"],
+      "capacity": [16, 9000],
+      "time_window": [1757311200,1757376000],
+      "skills": [1,2,4],
+      "max_tasks": 18,
+      "profile": "truck_profile",
+      "max_distance": 1200000,
+      "max_travel_time": 54000,
+      "max_stops": 18,
+      "drive_time_layover_config": { "max_continuous_driving": 14400, "layover_duration": 1800, "include_service_time": false }
+    }
+  ],
+
+  "shipments": [
+    { "pickup":   { "id": "S1-P",  "location_index": 12, "service": 600, "time_windows": [[1757314800,1757368800]], "setup": 120 },
+      "delivery": { "id": "S1-D",  "location_index": 5,  "service": 600, "time_windows": [[1757322000,1757372400]], "setup": 120 },
+      "amount": [6, 2400],  "skills": [1], "priority": 80, "load_types": ["chilled"], "incompatible_load_types": ["hazmat"], "max_time_in_vehicle": 21600 },
+
+    { "pickup":   { "id": "S2-P",  "location_index": 3,  "service": 480, "time_windows": [[1757314800,1757368800]] },
+      "delivery": { "id": "S2-D",  "location_index": 14, "service": 480, "time_windows": [[1757322000,1757372400]] },
+      "amount": [4, 1800],  "skills": [2], "priority": 70, "load_types": ["dry"], "max_time_in_vehicle": 21600 },
+
+    { "pickup":   { "id": "S3-P",  "location_index": 4,  "service": 600, "time_windows": [[1757318400,1757372400]] },
+      "delivery": { "id": "S3-D",  "location_index": 21, "service": 600, "time_windows": [[1757325600,1757372400]] },
+      "amount": [8, 3500],  "skills": [1], "priority": 85, "load_types": ["dry"], "max_time_in_vehicle": 28800 },
+
+    { "pickup":   { "id": "S4-P",  "location_index": 6,  "service": 480, "time_windows": [[1757322000,1757372400]] },
+      "delivery": { "id": "S4-D",  "location_index": 7,  "service": 480, "time_windows": [[1757332800,1757372400]] },
+      "amount": [4, 1600],  "skills": [2], "priority": 60, "load_types": ["dry"], "max_time_in_vehicle": 21600 },
+
+    { "pickup":   { "id": "S5-P",  "location_index": 9,  "service": 600, "time_windows": [[1757322000,1757372400]] },
+      "delivery": { "id": "S5-D",  "location_index": 11, "service": 600, "time_windows": [[1757332800,1757372400]] },
+      "amount": [10, 4200], "skills": [1], "priority": 75, "load_types": ["dry"], "incompatible_load_types": ["chilled"], "max_time_in_vehicle": 28800 },
+
+    { "pickup":   { "id": "S6-P",  "location_index": 8,  "service": 600, "time_windows": [[1757322000,1757372400]] },
+      "delivery": { "id": "S6-D",  "location_index": 10, "service": 600, "time_windows": [[1757332800,1757372400]] },
+      "amount": [6, 2500],  "skills": [4], "priority": 70, "load_types": ["dry"], "max_time_in_vehicle": 21600 },
+
+    { "pickup":   { "id": "S7-P",  "location_index": 2,  "service": 480, "time_windows": [[1757322000,1757372400]] },
+      "delivery": { "id": "S7-D",  "location_index": 24, "service": 480, "time_windows": [[1757332800,1757372400]] },
+      "amount": [5, 2200],  "skills": [4], "priority": 65, "load_types": ["fragile"], "incompatible_load_types": ["hazmat"], "max_time_in_vehicle": 21600 },
+
+    { "pickup":   { "id": "S8-P",  "location_index": 22, "service": 480, "time_windows": [[1757322000,1757372400]] },
+      "delivery": { "id": "S8-D",  "location_index": 15, "service": 480, "time_windows": [[1757332800,1757372400]] },
+      "amount": [4, 1600],  "skills": [1], "priority": 60, "load_types": ["dry"], "max_time_in_vehicle": 28800 },
+
+    { "pickup":   { "id": "S9-P",  "location_index": 17, "service": 600, "time_windows": [[1757332800,1757372400]] },
+      "delivery": { "id": "S9-D",  "location_index": 18, "service": 600, "time_windows": [[1757340000,1757372400]] },
+      "amount": [6, 2400],  "skills": [1], "priority": 70, "load_types": ["chilled"], "incompatible_load_types": ["hazmat"], "max_time_in_vehicle": 21600 },
+
+    { "pickup":   { "id": "S10-P", "location_index": 19, "service": 600, "time_windows": [[1757332800,1757372400]] },
+      "delivery": { "id": "S10-D", "location_index": 27, "service": 600, "time_windows": [[1757347200,1757372400]] },
+      "amount": [5, 2000],  "skills": [1,2], "priority": 55, "load_types": ["hazmat"], "incompatible_load_types": ["chilled","fragile"], "max_time_in_vehicle": 28800 }
+  ],
+
+  "jobs": [
+    { "id": "J1", "description": "Lekki retail drop",      "location_index": 12, "delivery": [3, 900],  "service": 600, "time_windows": [[1757322000,1757372400]], "skills": [4], "priority": 40 },
+    { "id": "J2", "description": "Ikeja replenishment",    "location_index": 13, "delivery": [2, 500],  "service": 600, "time_windows": [[1757325600,1757372400]], "skills": [4], "priority": 35 },
+    { "id": "J3", "description": "Sagamu delivery",        "location_index": 14, "delivery": [4, 1400], "service": 600, "time_windows": [[1757322000,1757372400]], "skills": [1], "priority": 45 },
+    { "id": "J4", "description": "Badagry drop",           "location_index": 25, "delivery": [2, 600],  "service": 480, "time_windows": [[1757325600,1757372400]], "skills": [1], "priority": 30 },
+    { "id": "J5", "description": "Tema cluster store",      "location_index": 26, "delivery": [3, 900],  "service": 600, "time_windows": [[1757332800,1757372400]], "skills": [2], "priority": 30 },
+    { "id": "J6", "description": "Sapele hardware",         "location_index": 23, "delivery": [2, 700],  "service": 480, "time_windows": [[1757336400,1757372400]], "skills": [1], "priority": 25 }
+  ],
+
+  "options": {
+    "objective": { "travel_cost": "distance", "custom": { "type": "min", "value": "vehicles" } },
+    "allow_early_arrival": true,
+    "solving_time_limit": 300,
+    "constraint": {
+      "max_vehicle_overtime": 3600,
+      "max_visit_lateness": 3600,
+      "max_activity_waiting_time": 14400
+    },
+    "routing": {
+      "disable_cache": false,
+      "cross_border": true,
+      "profiles": {
+        "truck_profile": {
+          "mode": "truck",
+          "truck_weight": 12000,
+          "truck_size": "250,250,900",
+          "hazmat_type": ["general"]
+        }
+      }
+    },
+    "grouping": {
+      "order_grouping": { "grouping_diameter": 150 },
+      "route_grouping": { "zone_diameter": 1500, "penalty_factor": 12.5, "proximity_factor": 2 }
+    }
+  },
+
+  "zones": [
+    {
+      "id": 301,
+      "description": "Lagos metro (soft box)",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[3.10,6.35],[3.70,6.35],[3.70,6.70],[3.10,6.70],[3.10,6.35]]]
+      }
+    },
+    {
+      "id": 302,
+      "description": "Greater Accra (soft box)",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-0.55,5.45],[0.25,5.45],[0.25,5.95],[-0.55,5.95],[-0.55,5.45]]]
+      }
+    }
+  ]
+}
+'
+
+
+REquest : 
+
+{
+  "description": "SA Truck VRP — multi-depot, multi-capacity, time windows, zones, grouping (fixed)",
+  "locations": {
+    "id": 101,
+    "location": [
+      "6.5244,3.3792",       // 0 Lagos depot
+      "5.6037,-0.1870",     // 1 Accra depot
+      "7.3775,3.9470",      // 2 Ibadan
+      "7.1600,3.3500",      // 3 Abeokuta
+      "6.3350,5.6030",      // 4 Benin City
+      "4.8156,7.0498",      // 5 Port Harcourt
+      "6.1498,6.7857",      // 6 Onitsha
+      "6.5244,7.5174",      // 7 Enugu
+      "5.6800,0.0100",      // 8 Tema
+      "6.6885,-1.6244",     // 9 Kumasi
+      "4.9040,-1.7562",     // 10 Takoradi
+      "5.1053,-1.2466",     // 11 Cape Coast
+      "6.4502,3.3903",      // 12 Lagos Island
+      "6.5960,3.3370",      // 13 Ikeja
+      "6.8689,3.7233",      // 14 Sagamu
+      "6.4531,7.5025",      // 15 Nsukka
+      "5.6145,-0.2057",     // 16 Accra CBD
+      "5.5600,-0.2050",     // 17 Airport Area
+      "5.5536,-0.1969",     // 18 Osu
+      "6.0200,-1.5200",     // 19 Obuasi
+      "5.2800,-2.5800",     // 20 Axim
+      "4.8242,6.9870",      // 21 Trans-Amadi PHC
+      "6.2100,7.0700",      // 22 Nnewi
+      "6.2600,5.3800",      // 23 Sapele
+      "6.4500,3.6000",      // 24 Epe
+      "6.4600,2.7300",      // 25 Badagry
+      "5.7000,-0.3600",     // 26 Kpone
+      "6.7000,-1.5700"      // 27 Kumasi North
+    ],
+    "approaches": [
+      "unrestricted","unrestricted",
+      "curb","curb","curb","curb","curb","curb","curb","curb","curb","curb",
+      "curb","curb","curb","curb","curb","curb","curb","curb","curb","curb",
+      "curb","curb","curb","curb","curb","curb"
+    ]
+  },
+
+  "depots": [
+    {
+      "id": "depot-lagos",
+      "location_index": 0,
+      "description": "Lagos DC",
+      "time_windows": [[1757311200,1757376000]],
+      "service": 600
+    },
+    {
+      "id": "depot-accra",
+      "location_index": 1,
+      "description": "Accra DC",
+      "time_windows": [[1757311200,1757376000]],
+      "service": 600
+    }
+  ],
+
+  "vehicles": [
+    {
+      "id": "NG-LAG-18T-01",
+      "description": "Rigid 18t - Lagos",
+      "start_depot_ids": ["depot-lagos"],
+      "end_depot_ids": ["depot-lagos"],
+      "capacity": [22, 12000],
+      "alternative_capacities": [[18, 9000]],
+      "time_window": [1757311200,1757376000],
+      "skills": [1,2],
+      "max_tasks": 22,
+      "drive_time_layover_config": { "max_continuous_driving": 14400, "layover_duration": 1800, "include_service_time": false },
+      "costs": { "fixed": 1500 },
+      "speed_factor": 0.92,
+      "profile": "truck_profile"
+    },
+    {
+      "id": "NG-LAG-REEF-12T",
+      "description": "Reefer 12t - Lagos",
+      "start_depot_ids": ["depot-lagos"],
+      "end_depot_ids": ["depot-lagos"],
+      "capacity": [14, 8000],
+      "time_window": [1757311200,1757376000],
+      "skills": [2,3],
+      "max_tasks": 18,
+      "breaks": [{ "id": 201, "time_windows": [[1757332800,1757336400]], "description": "Lunch", "service": 1800 }],
+      "costs": { "fixed": 1200 },
+      "speed_factor": 0.95,
+      "profile": "truck_profile"
+    },
+    {
+      "id": "GH-ACC-18T-01",
+      "description": "Rigid 18t - Accra",
+      "start_depot_ids": ["depot-accra"],
+      "end_depot_ids": ["depot-accra"],
+      "capacity": [22, 12000],
+      "time_window": [1757311200,1757376000],
+      "skills": [1,4],
+      "max_tasks": 20,
+      "breaks": [{ "id": 202, "time_windows": [[1757336400,1757340000]], "description": "Lunch", "service": 1800 }],
+      "costs": { "fixed": 1500 },
+      "profile": "truck_profile"
+    },
+    {
+      "id": "GH-ACC-BOX-8T-S2",
+      "description": "Box 8t - Accra (skill 2)",
+      "start_depot_ids": ["depot-accra"],
+      "end_depot_ids": ["depot-accra"],
+      "capacity": [10, 5000],
+      "time_window": [1757311200,1757376000],
+      "skills": [2,4],
+      "max_tasks": 16,
+      "drive_time_layover_config": { "max_continuous_driving": 10800, "layover_duration": 1200, "include_service_time": false },
+      "profile": "truck_profile"
+    },
+    {
+      "id": "NAT-FLOAT-10T",
+      "description": "National spare",
+      "start_depot_ids": ["depot-lagos"],
+      "end_depot_ids": ["depot-lagos"],
+      "capacity": [16, 9000],
+      "time_window": [1757311200,1757376000],
+      "skills": [1,2,4],
+      "max_tasks": 18,
+      "profile": "truck_profile",
+      "max_distance": 1200000,
+      "max_travel_time": 54000,
+      "max_stops": 18,
+      "drive_time_layover_config": { "max_continuous_driving": 14400, "layover_duration": 1800, "include_service_time": false }
+    }
+  ],
+
+  "shipments": [
+    { "pickup":   { "id": "S1-P",  "location_index": 12, "service": 600, "time_windows": [[1757314800,1757368800]], "setup": 120 },
+      "delivery": { "id": "S1-D",  "location_index": 5,  "service": 600, "time_windows": [[1757322000,1757372400]], "setup": 120 },
+      "amount": [6, 2400],  "skills": [1], "priority": 80, "load_types": ["chilled"], "incompatible_load_types": ["hazmat"], "max_time_in_vehicle": 21600 },
+
+    { "pickup":   { "id": "S2-P",  "location_index": 3,  "service": 480, "time_windows": [[1757314800,1757368800]] },
+      "delivery": { "id": "S2-D",  "location_index": 14, "service": 480, "time_windows": [[1757322000,1757372400]] },
+      "amount": [4, 1800],  "skills": [2], "priority": 70, "load_types": ["dry"], "max_time_in_vehicle": 21600 },
+
+    { "pickup":   { "id": "S3-P",  "location_index": 4,  "service": 600, "time_windows": [[1757318400,1757372400]] },
+      "delivery": { "id": "S3-D",  "location_index": 21, "service": 600, "time_windows": [[1757325600,1757372400]] },
+      "amount": [8, 3500],  "skills": [1], "priority": 85, "load_types": ["dry"], "max_time_in_vehicle": 28800 },
+
+    { "pickup":   { "id": "S4-P",  "location_index": 6,  "service": 480, "time_windows": [[1757322000,1757372400]] },
+      "delivery": { "id": "S4-D",  "location_index": 7,  "service": 480, "time_windows": [[1757332800,1757372400]] },
+      "amount": [4, 1600],  "skills": [2], "priority": 60, "load_types": ["dry"], "max_time_in_vehicle": 21600 },
+
+    { "pickup":   { "id": "S5-P",  "location_index": 9,  "service": 600, "time_windows": [[1757322000,1757372400]] },
+      "delivery": { "id": "S5-D",  "location_index": 11, "service": 600, "time_windows": [[1757332800,1757372400]] },
+      "amount": [10, 4200], "skills": [1], "priority": 75, "load_types": ["dry"], "incompatible_load_types": ["chilled"], "max_time_in_vehicle": 28800 },
+
+    { "pickup":   { "id": "S6-P",  "location_index": 8,  "service": 600, "time_windows": [[1757322000,1757372400]] },
+      "delivery": { "id": "S6-D",  "location_index": 10, "service": 600, "time_windows": [[1757332800,1757372400]] },
+      "amount": [6, 2500],  "skills": [4], "priority": 70, "load_types": ["dry"], "max_time_in_vehicle": 21600 },
+
+    { "pickup":   { "id": "S7-P",  "location_index": 2,  "service": 480, "time_windows": [[1757322000,1757372400]] },
+      "delivery": { "id": "S7-D",  "location_index": 24, "service": 480, "time_windows": [[1757332800,1757372400]] },
+      "amount": [5, 2200],  "skills": [4], "priority": 65, "load_types": ["fragile"], "incompatible_load_types": ["hazmat"], "max_time_in_vehicle": 21600 },
+
+    { "pickup":   { "id": "S8-P",  "location_index": 22, "service": 480, "time_windows": [[1757322000,1757372400]] },
+      "delivery": { "id": "S8-D",  "location_index": 15, "service": 480, "time_windows": [[1757332800,1757372400]] },
+      "amount": [4, 1600],  "skills": [1], "priority": 60, "load_types": ["dry"], "max_time_in_vehicle": 28800 },
+
+    { "pickup":   { "id": "S9-P",  "location_index": 17, "service": 600, "time_windows": [[1757332800,1757372400]] },
+      "delivery": { "id": "S9-D",  "location_index": 18, "service": 600, "time_windows": [[1757340000,1757372400]] },
+      "amount": [6, 2400],  "skills": [1], "priority": 70, "load_types": ["chilled"], "incompatible_load_types": ["hazmat"], "max_time_in_vehicle": 21600 },
+
+    { "pickup":   { "id": "S10-P", "location_index": 19, "service": 600, "time_windows": [[1757332800,1757372400]] },
+      "delivery": { "id": "S10-D", "location_index": 27, "service": 600, "time_windows": [[1757347200,1757372400]] },
+      "amount": [5, 2000],  "skills": [1,2], "priority": 55, "load_types": ["hazmat"], "incompatible_load_types": ["chilled","fragile"], "max_time_in_vehicle": 28800 }
+  ],
+
+  "jobs": [
+    { "id": "J1", "description": "Lekki retail drop",      "location_index": 12, "delivery": [3, 900],  "service": 600, "time_windows": [[1757322000,1757372400]], "skills": [4], "priority": 40 },
+    { "id": "J2", "description": "Ikeja replenishment",    "location_index": 13, "delivery": [2, 500],  "service": 600, "time_windows": [[1757325600,1757372400]], "skills": [4], "priority": 35 },
+    { "id": "J3", "description": "Sagamu delivery",        "location_index": 14, "delivery": [4, 1400], "service": 600, "time_windows": [[1757322000,1757372400]], "skills": [1], "priority": 45 },
+    { "id": "J4", "description": "Badagry drop",           "location_index": 25, "delivery": [2, 600],  "service": 480, "time_windows": [[1757325600,1757372400]], "skills": [1], "priority": 30 },
+    { "id": "J5", "description": "Tema cluster store",      "location_index": 26, "delivery": [3, 900],  "service": 600, "time_windows": [[1757332800,1757372400]], "skills": [2], "priority": 30 },
+    { "id": "J6", "description": "Sapele hardware",         "location_index": 23, "delivery": [2, 700],  "service": 480, "time_windows": [[1757336400,1757372400]], "skills": [1], "priority": 25 }
+  ],
+
+  "options": {
+    "objective": { "travel_cost": "distance", "custom": { "type": "min", "value": "vehicles" } },
+    "allow_early_arrival": true,
+    "solving_time_limit": 300,
+    "constraint": {
+      "max_vehicle_overtime": 3600,
+      "max_visit_lateness": 3600,
+      "max_activity_waiting_time": 14400
+    },
+    "routing": {
+      "disable_cache": false,
+      "cross_border": true,
+      "profiles": {
+        "truck_profile": {
+          "mode": "truck",
+          "truck_weight": 12000,
+          "truck_size": "250,250,900",
+          "hazmat_type": ["general"]
+        }
+      }
+    },
+    "grouping": {
+      "order_grouping": { "grouping_diameter": 150 },
+      "route_grouping": { "zone_diameter": 1500, "penalty_factor": 12.5, "proximity_factor": 2 }
+    }
+  },
+
+  "zones": [
+    {
+      "id": 301,
+      "description": "Lagos metro (soft box)",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[3.10,6.35],[3.70,6.35],[3.70,6.70],[3.10,6.70],[3.10,6.35]]]
+      }
+    },
+    {
+      "id": 302,
+      "description": "Greater Accra (soft box)",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-0.55,5.45],[0.25,5.45],[0.25,5.95],[-0.55,5.95],[-0.55,5.45]]]
+      }
+    }
+  ]
+}
+
+
+Response 
+
+{
+    "id": "d9ce6a7471322af9e2cc7f2d7d81bd0d",
+    "message": "Optimization job created",
+    "status": "Ok",
+    "warning": [
+        "location_index[16] and 1 others are unused",
+        "location_index[12] is used for both pickup and dropoff"
+    ]
+}
+

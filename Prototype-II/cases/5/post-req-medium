@@ -1,0 +1,87 @@
+curl --location 'https://api.nextbillion.io/optimization/v2?key=bf321858e11c473a853fe11ecdd34a16' \
+--header 'Content-Type: application/json' \
+--data '{
+  "description": "R1 — 2 depots, 7 drops, 2 vehicles, no capacities/time windows",
+  "locations": {
+    "id": 101,
+    "location": [
+      "-26.2041,28.0473",
+      "-33.9249,18.4241",
+      "-25.7479,28.2293",
+      "-26.2678,27.8585",
+      "-29.8587,31.0218",
+      "-29.6006,30.3794",
+      "-28.7282,24.7499",
+      "-33.0153,27.9116",
+      "-33.9608,25.6022"
+    ],
+    "approaches": ["unrestricted","unrestricted","curb","curb","curb","curb","curb","curb","curb"]
+  },
+  "depots": [
+    { "id": "depot-jhb", "location_index": 0, "description": "Johannesburg DC" },
+    { "id": "depot-ct",  "location_index": 1, "description": "Cape Town DC" }
+  ],
+  "vehicles": [
+    { "id": "van-jhb-1", "start_depot_ids": ["depot-jhb"], "end_depot_ids": ["depot-jhb"] },
+    { "id": "van-ct-1",  "start_depot_ids": ["depot-ct"],  "end_depot_ids": ["depot-ct"] }
+  ],
+  "jobs": [
+    { "id": "J1", "location_index": 2, "service": 300 },
+    { "id": "J2", "location_index": 3, "service": 300 },
+    { "id": "J3", "location_index": 4, "service": 300 },
+    { "id": "J4", "location_index": 5, "service": 300 },
+    { "id": "J5", "location_index": 6, "service": 300 },
+    { "id": "J6", "location_index": 7, "service": 300 },
+    { "id": "J7", "location_index": 8, "service": 300 }
+  ],
+  "options": { "objective": { "travel_cost": "distance" } }
+}
+'
+
+
+
+Request body 
+{
+  "description": "R1 — 2 depots, 7 drops, 2 vehicles, no capacities/time windows",
+  "locations": {
+    "id": 101,
+    "location": [
+      "-26.2041,28.0473",
+      "-33.9249,18.4241",
+      "-25.7479,28.2293",
+      "-26.2678,27.8585",
+      "-29.8587,31.0218",
+      "-29.6006,30.3794",
+      "-28.7282,24.7499",
+      "-33.0153,27.9116",
+      "-33.9608,25.6022"
+    ],
+    "approaches": ["unrestricted","unrestricted","curb","curb","curb","curb","curb","curb","curb"]
+  },
+  "depots": [
+    { "id": "depot-jhb", "location_index": 0, "description": "Johannesburg DC" },
+    { "id": "depot-ct",  "location_index": 1, "description": "Cape Town DC" }
+  ],
+  "vehicles": [
+    { "id": "van-jhb-1", "start_depot_ids": ["depot-jhb"], "end_depot_ids": ["depot-jhb"] },
+    { "id": "van-ct-1",  "start_depot_ids": ["depot-ct"],  "end_depot_ids": ["depot-ct"] }
+  ],
+  "jobs": [
+    { "id": "J1", "location_index": 2, "service": 300 },
+    { "id": "J2", "location_index": 3, "service": 300 },
+    { "id": "J3", "location_index": 4, "service": 300 },
+    { "id": "J4", "location_index": 5, "service": 300 },
+    { "id": "J5", "location_index": 6, "service": 300 },
+    { "id": "J6", "location_index": 7, "service": 300 },
+    { "id": "J7", "location_index": 8, "service": 300 }
+  ],
+  "options": { "objective": { "travel_cost": "distance" } }
+}
+
+Response Body : 
+
+{
+    "id": "b4de8cada6c30f8157e7a98234bdf231",
+    "message": "Optimization job created",
+    "status": "Ok"
+}

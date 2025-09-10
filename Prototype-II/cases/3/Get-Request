@@ -1,0 +1,163 @@
+curl --location 'https://api.nextbillion.io/optimization/v2/result?id=5ccd80bbc5ae13d1c638cab262ae9032&key=bf321858e11c473a853fe11ecdd34a16' \
+--header 'Content-Type: application/json'
+
+Response 
+{
+    "description": "S2 — 1 vehicle, capacity [10], 3 delivery jobs",
+    "result": {
+        "code": 0,
+        "summary": {
+            "cost": 14120,
+            "routes": 1,
+            "unassigned": 0,
+            "setup": 0,
+            "service": 720,
+            "duration": 2364,
+            "waiting_time": 0,
+            "priority": 0,
+            "delivery": [
+                9
+            ],
+            "pickup": [
+                0
+            ],
+            "distance": 14120
+        },
+        "routes": [
+            {
+                "vehicle": "van-1",
+                "cost": 14120,
+                "steps": [
+                    {
+                        "type": "start",
+                        "arrival": 0,
+                        "duration": 0,
+                        "service": 0,
+                        "waiting_time": 0,
+                        "location": [
+                            -26.2041,
+                            28.0473
+                        ],
+                        "location_index": 0,
+                        "load": [
+                            9
+                        ],
+                        "distance": 0,
+                        "snapped_location": [
+                            -26.2041,
+                            28.04734
+                        ]
+                    },
+                    {
+                        "type": "job",
+                        "arrival": 872,
+                        "duration": 872,
+                        "service": 240,
+                        "waiting_time": 0,
+                        "location": [
+                            -26.17,
+                            28.04
+                        ],
+                        "location_index": 3,
+                        "id": "J3",
+                        "load": [
+                            7
+                        ],
+                        "distance": 5088,
+                        "internal_id": 502325354,
+                        "snapped_location": [
+                            -26.1699,
+                            28.03987
+                        ]
+                    },
+                    {
+                        "type": "job",
+                        "arrival": 1763,
+                        "duration": 1523,
+                        "service": 240,
+                        "waiting_time": 0,
+                        "location": [
+                            -26.18,
+                            28.06
+                        ],
+                        "location_index": 2,
+                        "id": "J2",
+                        "load": [
+                            3
+                        ],
+                        "distance": 9907,
+                        "internal_id": 519102973,
+                        "snapped_location": [
+                            -26.1799,
+                            28.06
+                        ]
+                    },
+                    {
+                        "type": "job",
+                        "arrival": 2373,
+                        "duration": 1893,
+                        "service": 240,
+                        "waiting_time": 0,
+                        "location": [
+                            -26.19,
+                            28.05
+                        ],
+                        "location_index": 1,
+                        "id": "J1",
+                        "load": [
+                            0
+                        ],
+                        "distance": 12033,
+                        "internal_id": 468770116,
+                        "snapped_location": [
+                            -26.18999,
+                            28.05013
+                        ]
+                    },
+                    {
+                        "type": "end",
+                        "arrival": 3084,
+                        "duration": 2364,
+                        "service": 0,
+                        "waiting_time": 0,
+                        "location": [
+                            -26.2041,
+                            28.0473
+                        ],
+                        "location_index": 0,
+                        "load": [
+                            0
+                        ],
+                        "distance": 14120,
+                        "snapped_location": [
+                            -26.2041,
+                            28.04734
+                        ]
+                    }
+                ],
+                "service": 720,
+                "duration": 2364,
+                "waiting_time": 0,
+                "priority": 0,
+                "delivery": [
+                    9
+                ],
+                "pickup": [
+                    0
+                ],
+                "distance": 14120,
+                "geometry": "r~|~C{~djDC@K?[DiBPaCPW@d@bJTdD@PPjCwCRuBPa@BRbDVtDqAJkAJQBIHk@DoAL]BA@w@D}@HoCTc@BUD??K@k@DkCRE?G@K@I?K@G@M@_@Do@DYBaAHcBPO@WDk@Fo@FiALYD_@FqAJe@D_AHI@E@K@C@KBMHIHEDMNKLwAtBKNMJKFEBKD]FE?G@sAH_@DWBi@DK@aAHgAJMCG?GAIAAAEACCGECCCEEGCGK}BEaAGiBGMESCIAEEIECEGCCCAA?CAC?EAE?E@_@Bg@Fg@Do@Dq@Bs@@Q?e@CmBKK@I?G@m@L]FM@Q?G@I?S?{ABU?Y?K?q@CGAK?QAe@Ek@EUCQCM?IAO@I@SBKBQBUFQDYLWN_@VwA~@yA`AmAt@OJ]T[RYRC@IFy@h@w@f@g@ZcAr@u@f@_@TKFa@ZGFIFCBWVIHIJSVY\\s@v@[\\SFKNKGiAq@i@[sCcBYQaAi@SMUUW[IIYa@UWSSSOSMWISGQCOCC?]Cq@Cq@C]Em@Mo@OYIQGe@S[Qe@WCC[U_@Ye@c@_@]iAgA_@]c@e@cAaAGFeB~B}AxBq@|@i@r@CDKJMHq@RUaAa@kBd@f@|AzABEh@s@p@}@|AyBdB_CFGLSbA`ALLVT\\ZnAnA`@`@\\VZV\\Vb@VVLVN^N^L\\Ll@LXB\\Bp@BZ@V?F?H@RBNDH@VJVLRLDDNJNPxAjBRTxAlArCbBh@Zr@JP@HAJEB?`@Qp@y@Za@NSHI@APSVWVQp@e@HGPM`FeDn@a@Zc@T]LUHOBO@C?UGeAa@_Di@eEEWMs@EQR?`AAf@ENAd@EFATCHAb@KrEaAd@KNGTKNKFGFILMDGRYLOLMNKPKNELCDARAPAX?N@T_K@m@@MDM@EqB_A{@_@{C{AkCqAUKgAe@IEcAc@SKOKMMKOIQIWEWAMAIAMCSAIEWGS?CKa@IWYgAUaAEOo@{BMc@eBsG{AaG[kAqBmH_BgGSu@I[GWK_@K]U{@_@aBu@kCTEDAJA`@EjC??GAqIbA?hA?@~F?\\@x@jCA~A?n@A`A?hA?lCAlCAnC?jCA@rHAPCPAFEVEX@TB\\Ht@P~Ah@pENvAf@vEFh@J`Af@tEFj@BTf@jE@JnAQ^GHADBBBDJPdBDH?BDDF@d@G~@MPChAMBAHAl@IHCz@MH?B@TFVOVIfBOLBH@\\AzASHARdD?DK@w@DwAJT`E|CU`DW`DUzCUdAI~@GLAJAdBOHALA`AGb@Ed@EjBONAVCvBOrCSf@CNADAp@ENAHDRCXCXCt@GfAIn@GLELAJALF`BOLKL?D?D?B@F?RJB@B?@@BAbBKfAIpAKxCS@J?LLpCTvD?L@JLtCR~DVA`CQhBQZEJ?BA",
+                "internal_id": 3977904708,
+                "profile": "default",
+                "adopted_capacity": [
+                    10
+                ]
+            }
+        ],
+        "routing_profiles": {
+            "default": {}
+        }
+    },
+    "status": "Ok",
+    "message": ""
+}
